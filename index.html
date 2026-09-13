@@ -1,75 +1,243 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Compass - </title>
+    <title>The Compass - الوعي المالي والوضوح الرقمي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
     <style>
-        body { 
-            font-family: 'Cairo', sans-serif; 
-            background-color: #fcfaf7; 
-            color: #1a1a1a; 
-            margin: 0; 
-            overflow-x: hidden; 
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #fcfaf7;
+            color: #1a1a1a;
+            margin: 0;
+            overflow-x: hidden;
         }
-        :root { 
-            --royal-blue: #00002A; 
-            --gold-primary: #D4AF37; 
-            --gold-light: #F1E5AC; 
-            --deep-sea: #1A3F75; 
+        :root {
+            --royal-blue: #00002A;
+            --gold-primary: #D4AF37;
+            --gold-light: #F1E5AC;
+            --deep-sea: #1A3F75;
         }
-        
-        /* شاشة الحماية وقفل الدخول */
+
+        /* شاشة الدخول الجديدة — نفس هوية مربع H، بتصميم فاخر */
         #hedaya-lock-screen {
-            position: fixed; 
-            inset: 0; 
-            background-color: var(--royal-blue);
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 50% 18%, rgba(212,175,55,0.14), transparent 28%),
+                radial-gradient(circle at 15% 85%, rgba(26,63,117,0.28), transparent 30%),
+                linear-gradient(135deg, #00002A 0%, #05053b 52%, #00002A 100%);
+            display: flex;
+            align-items: center;
             justify-content: center;
-            z-index: 10000; 
-            transition: opacity 0.6s ease-in-out; 
+            z-index: 10000;
+            transition: opacity 0.45s ease-in-out;
+            padding: 22px;
+        }
+        .auth-shell {
+            width: min(430px, 100%);
+            position: relative;
+        }
+        .auth-glow {
+            position: absolute;
+            inset: -45px;
+            border-radius: 60px;
+            background: radial-gradient(circle, rgba(212,175,55,0.11), transparent 62%);
+            pointer-events: none;
+            filter: blur(8px);
+        }
+        .auth-card {
+            position: relative;
+            background: #00002A;
+            border: 1px solid rgba(212,175,55,0.65);
+            border-radius: 38px;
+            padding: 34px;
+            box-shadow: 0 35px 100px rgba(0,0,42,0.65), inset 0 1px 0 rgba(255,255,255,0.04);
+            backdrop-filter: blur(16px);
         }
         .h-lock-frame {
-            width: 120px; 
-            height: 120px; 
-            background: white; 
-            border-radius: 35px;
-            display: flex; 
-            align-items: center; 
+            width: 112px;
+            height: 112px;
+            background: #EADFC8;
+            border-radius: 33px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            border: 3px solid var(--gold-primary); 
-            margin-bottom: 40px; 
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            border: 3px solid var(--gold-primary);
+            margin: 0 auto 22px;
+            box-shadow: 0 16px 45px rgba(212, 175, 55, 0.24), inset 0 0 0 1px rgba(0,0,42,0.05);
         }
-        .pin-input-hedaya {
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid var(--gold-primary);
-            border-radius: 15px; 
-            padding: 12px; 
-            color: var(--gold-primary); 
+        .auth-brand-title {
+            color: #F4E8D0;
+            font-weight: 900;
+            font-size: 26px;
+            letter-spacing: -0.5px;
             text-align: center;
-            font-size: 28px; 
-            letter-spacing: 12px; 
-            width: 180px; 
-            margin-bottom: 30px; 
+        }
+                .connection-status {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 9px;
+            font-weight: 800;
+            color: #9E947E;
+            letter-spacing: 0.3px;
+        }
+        .connection-status.ready { color: #B9D7BC; }
+        .connection-status.loading { color: #D8CBAF; }
+        .connection-status.error { color: #F1A7A0; }
+.auth-brand-subtitle {
+            color: var(--gold-light);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-top: 4px;
+        }
+        .auth-kicker {
+            text-align: center;
+            color: #D8CBAF;
+            font-size: 12px;
+            margin: 22px 0 18px;
+        }
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: #07103D;
+            padding: 6px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+        }
+        .auth-tab {
+            border: 0;
+            border-radius: 12px;
+            padding: 10px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 12px;
+            color: #C9C1AE;
+            background: transparent;
+            cursor: pointer;
+            transition: 0.25s ease;
+        }
+        .auth-tab.active {
+            color: var(--royal-blue);
+            background: #EADFC8;
+            box-shadow: 0 7px 18px rgba(0,0,42,0.08);
+        }
+        .auth-field {
+            margin-bottom: 12px;
+        }
+        .auth-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #EADFC8;
+            margin-bottom: 6px;
+        }
+        .auth-input-wrap {
+            position: relative;
+        }
+        .auth-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 15px;
+            background: #EADFC8;
+            border: 1px solid #C7B991;
+            border-radius: 16px;
             outline: none;
+            font-family: inherit;
+            font-size: 13px;
+            color: #00002A;
+            transition: 0.2s ease;
         }
-        .btn-lock-entry {
-            background: var(--gold-primary); 
-            color: var(--royal-blue); 
-            padding: 14px 80px;
-            border-radius: 50px; 
-            font-weight: 900; 
-            cursor: pointer; 
-            transition: 0.3s;
+        .auth-input:focus {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.10);
+            background: #F0E6D2;
         }
-        
+        .auth-input.with-eye { padding-left: 48px; }
+        .eye-btn {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 0;
+            background: transparent;
+            color: #6A6355;
+            cursor: pointer;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+        }
+        .eye-btn:hover { background: #DCCFB5; color: #00002A; }
+        .auth-primary {
+            width: 100%;
+            margin-top: 6px;
+            padding: 14px 18px;
+            border: 0;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #D4AF37, #B8901F);
+            color: var(--royal-blue);
+            font-family: inherit;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 12px 25px rgba(212,175,55,0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .auth-primary:hover { transform: translateY(-1px); box-shadow: 0 16px 28px rgba(212,175,55,0.30); }
+        .auth-primary:disabled { opacity: 0.65; cursor: wait; transform: none; }
+        .auth-link {
+            border: 0;
+            background: transparent;
+            color: var(--gold-light);
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .auth-link:hover { text-decoration: underline; }
+        .auth-message {
+            min-height: 22px;
+            margin-top: 12px;
+            font-size: 11px;
+            line-height: 1.8;
+            text-align: center;
+            font-weight: 700;
+        }
+        .auth-message.error { color: #dc2626; }
+        .auth-message.success { color: #059669; }
+        .auth-divider {
+            height: 1px;
+            background: rgba(234,223,200,0.22);
+            margin: 18px 0 12px;
+        }
+        .auth-footnote {
+            text-align: center;
+            color: #AFA68F;
+            font-size: 9px;
+            line-height: 1.8;
+        }
+        .auth-hidden { display: none !important; }
+        .auth-loader {
+            display: inline-flex;
+            width: 17px;
+            height: 17px;
+            border: 2px solid rgba(0,0,42,0.20);
+            border-top-color: var(--royal-blue);
+            border-radius: 50%;
+            animation: authSpin 0.7s linear infinite;
+            vertical-align: -3px;
+            margin-left: 7px;
+        }
+        @keyframes authSpin { to { transform: rotate(360deg); } }
+
         /* تنسيق كروت الميزانية */
         .balance-card {
             background: white;
@@ -87,59 +255,131 @@
         .card-equity { border-left: 15px solid var(--gold-primary); }
 
         /* القائمة الجانبية للتنقل */
-        #side-menu { 
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-            transform: translateX(100%); 
-        }
+        #side-menu { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); }
         #side-menu.open { transform: translateX(0); }
-        
-        .nav-icon-link { 
-            width: 60px; 
-            height: 60px; 
-            background: var(--deep-sea); 
-            border-radius: 20px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin-bottom: 20px; 
-            color: var(--gold-light); 
-            transition: 0.3s; 
-            cursor: pointer; 
+
+        .nav-icon-link {
+            width: 60px;
+            height: 60px;
+            background: var(--deep-sea);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--gold-light);
+            transition: 0.3s;
+            cursor: pointer;
         }
-        .nav-icon-link.active { 
-            background: var(--gold-primary); 
-            color: var(--royal-blue); 
-            box-shadow: 0 0 15px var(--gold-primary); 
+        .nav-icon-link.active {
+            background: var(--gold-primary);
+            color: var(--royal-blue);
+            box-shadow: 0 0 15px var(--gold-primary);
         }
-        
-        .dark-card { 
-            background-color: var(--royal-blue); 
-            color: white; 
-            border-radius: 40px; 
-            border: 1px solid var(--gold-primary); 
+
+        .dark-card {
+            background-color: var(--royal-blue);
+            color: white;
+            border-radius: 40px;
+            border: 1px solid var(--gold-primary);
         }
         .stat-card { padding: 30px; margin-bottom: 15px; box-shadow: 0 20px 40px rgba(0,0,42,0.25); }
         .stat-card .value { font-size: 34px; font-weight: 900; color: var(--gold-primary); }
-        
-        .quick-input-group input {
-            border: 1px solid #e2e8f0;
-            background-color: #ffffff;
-            transition: all 0.2s;
-        }
-        .quick-input-group input:focus {
-            border-color: var(--gold-primary);
-            background-color: #fffdf9;
-        }
+
+        .quick-input-group input { border: 1px solid #e2e8f0; background-color: #ffffff; transition: all 0.2s; }
+        .quick-input-group input:focus { border-color: var(--gold-primary); background-color: #fffdf9; }
         svg.filled { fill: currentColor; }
     </style>
 </head>
 <body>
 
+    <!-- شاشة الحساب: نفس مربع H، لكن بدل PIN أصبحت Auth حقيقية عبر Supabase -->
     <div id="hedaya-lock-screen">
-        <div class="h-lock-frame"><span style="font-size: 65px; font-weight: 900; color: #00002A;">H</span></div>
-        <input type="password" id="hedaya-pin" class="pin-input-hedaya" placeholder="••••" maxlength="4">
-        <button class="btn-lock-entry" onclick="checkHedaiaLock()">دخول</button>
-        <p id="error-msg-h" class="text-red-400 font-bold mt-4 hidden">الرمز غير صحيح</p>
+        <div class="auth-shell">
+            <div class="auth-glow"></div>
+            <div class="auth-card">
+                <div class="h-lock-frame"><span style="font-size: 62px; font-weight: 900; color: #00002A;">H</span></div>
+                <div class="auth-brand-title">The Compass</div>
+                <div class="auth-brand-subtitle">الوعي المالي والوضوح الرقمي</div>
+                <div id="connection-status" class="connection-status">جاري تجهيز الاتصال الآمن...</div>
+
+                <!-- تسجيل الدخول وإنشاء الحساب -->
+                <div id="auth-main-view">
+                    <p id="auth-kicker" class="auth-kicker">مساحتك المالية الخاصة، .</p>
+
+                    <div class="auth-tabs">
+                        <button id="tab-login" class="auth-tab active" type="button" onclick="switchAuthMode('login')">تسجيل الدخول</button>
+                        <button id="tab-signup" class="auth-tab" type="button" onclick="switchAuthMode('signup')">إنشاء حساب</button>
+                    </div>
+
+                    <div class="auth-field">
+                        <label class="auth-label" for="auth-email">البريد الإلكتروني</label>
+                        <input id="auth-email" class="auth-input" type="email" autocomplete="email" placeholder="name@example.com">
+                    </div>
+
+                    <div class="auth-field">
+                        <label class="auth-label" for="auth-password">كلمة المرور</label>
+                        <div class="auth-input-wrap">
+                            <input id="auth-password" class="auth-input with-eye" type="password" autocomplete="current-password" placeholder="••••••••">
+                            <button class="eye-btn" type="button" onclick="togglePassword('auth-password', this)" aria-label="إظهار كلمة المرور">◉</button>
+                        </div>
+                    </div>
+
+                    <div id="signup-password-confirm" class="auth-field auth-hidden">
+                        <label class="auth-label" for="auth-password-confirm">تأكيد كلمة المرور</label>
+                        <div class="auth-input-wrap">
+                            <input id="auth-password-confirm" class="auth-input with-eye" type="password" autocomplete="new-password" placeholder="••••••••">
+                            <button class="eye-btn" type="button" onclick="togglePassword('auth-password-confirm', this)" aria-label="إظهار كلمة المرور">◉</button>
+                        </div>
+                    </div>
+
+                    <div id="forgot-wrap" class="text-left mb-2">
+                        <button class="auth-link" type="button" onclick="showForgotPassword()">نسيت كلمة المرور؟</button>
+                    </div>
+
+                    <button id="auth-submit" class="auth-primary" type="button" onclick="submitAuth()">دخول</button>
+                    <div id="auth-message" class="auth-message"></div>
+                </div>
+
+                <!-- استعادة كلمة المرور -->
+                <div id="forgot-view" class="auth-hidden">
+                    <p class="auth-kicker" style="margin-top: 10px;">أدخلي بريدك الإلكتروني وسنرسل لكِ رابطًا آمنًا لإعادة تعيين كلمة المرور.</p>
+                    <div class="auth-field">
+                        <label class="auth-label" for="forgot-email">البريد الإلكتروني</label>
+                        <input id="forgot-email" class="auth-input" type="email" autocomplete="email" placeholder="name@example.com">
+                    </div>
+                    <button id="forgot-submit" class="auth-primary" type="button" onclick="sendResetEmail()">إرسال رابط الاستعادة</button>
+                    <div id="forgot-message" class="auth-message"></div>
+                    <div class="text-center mt-3">
+                        <button class="auth-link" type="button" onclick="backToAuth()">العودة لتسجيل الدخول</button>
+                    </div>
+                </div>
+
+                <!-- تحديث كلمة المرور بعد فتح رابط الاستعادة -->
+                <div id="reset-view" class="auth-hidden">
+                    <p class="auth-kicker" style="margin-top: 10px;">اختاري كلمة مرور جديدة لحسابك.</p>
+                    <div class="auth-field">
+                        <label class="auth-label" for="reset-password">كلمة المرور الجديدة</label>
+                        <div class="auth-input-wrap">
+                            <input id="reset-password" class="auth-input with-eye" type="password" autocomplete="new-password" placeholder="••••••••">
+                            <button class="eye-btn" type="button" onclick="togglePassword('reset-password', this)" aria-label="إظهار كلمة المرور">◉</button>
+                        </div>
+                    </div>
+                    <div class="auth-field">
+                        <label class="auth-label" for="reset-password-confirm">تأكيد كلمة المرور</label>
+                        <div class="auth-input-wrap">
+                            <input id="reset-password-confirm" class="auth-input with-eye" type="password" autocomplete="new-password" placeholder="••••••••">
+                            <button class="eye-btn" type="button" onclick="togglePassword('reset-password-confirm', this)" aria-label="إظهار كلمة المرور">◉</button>
+                        </div>
+                    </div>
+                    <button id="reset-submit" class="auth-primary" type="button" onclick="updatePassword()">حفظ كلمة المرور الجديدة</button>
+                    <div id="reset-message" class="auth-message"></div>
+                </div>
+
+                <div class="auth-divider"></div>
+                <div class="auth-footnote">Designed by Hedaya.</div>
+            </div>
+        </div>
     </div>
 
     <div id="overlay" class="fixed inset-0 bg-black/60 hidden z-[90]" onclick="toggleMenu()"></div>
@@ -150,11 +390,11 @@
         </div>
         <div class="nav-icon-link" title=" والمدخلات السريعة" onclick="showSection('sovereign', this)">
             <svg class="filled" width="28" height="28" viewBox="0 0 24 24">
-                <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.11.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
             </svg>
         </div>
         <div class="nav-icon-link" title="المبيعات والتجارة" onclick="showSection('sales-entry', this)">
-            <svg class="filled" width="28" height="28" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <svg class="filled" width="28" height="28" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48-.0.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
         </div>
         <div class="nav-icon-link" title="تحليل الربحية" onclick="showSection('profit-calc', this)">
             <svg class="filled" width="28" height="28" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
@@ -162,22 +402,22 @@
 
         <div class="nav-icon-link" title="تصدير إكسل (Excel)" onclick="exportExcel()">
             <svg class="filled" width="28" height="28" viewBox="0 0 24 24">
-                <path d="M2.2 2h19.6c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2H2.2c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2zm1.6 4v3.6h4.8V6H3.8zm0 5.6V15h4.8v-3.4H3.8zm0 5.4v3.4h4.8V17H3.8zM10.2 6v3.6h4.8V6h-4.8zm0 5.6V15h4.8v-3.4h-4.8zm0 5.4v3.4h4.8V17h-4.8zM16.6 6v3.6h4.8V6h-4.8zm3.2 5.6h1.6V15-1.6v-3.4zM16.6 17v3.4h1.6V17h-1.6zM2 4v16h20V4H2zM15 8h2.6L19 12l1.4-4h2.6l-3.2 8h-2.6l-3.2-8h2.6l1.2 3 1.2-3H15v8h-2V8h2z"/>
+                <path d="M2.2 2h19.6c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2H2.2c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2zm1.6 4v3.6h4.8V6H3.8zm0 5.6V15h4.8v-3.4H3.8zm0 5.4v3.4h4.8V17H3.8zM10.2 6v3.6h4.8V6h-4.8zm0 5.6V15h4.8v-3.4h-4.8zm0 5.4v3.4h4.8V17h-4.8zM16.6 6v3.6h4.8V6h-4.8zm3.2 5.6h1.6V15-1.6v-3.4zM16.6 17v3.4h1.6V17h-1.6zM2 4v16h20V4H2zM15 8h2.6L19 12l1.4-4h2.6l-3.2 8h-2.6l1.2 3 1.2-3H15v8h-2V8h2z"/>
             </svg>
         </div>
     </div>
 
     <div class="max-w-6xl mx-auto min-h-screen p-6 relative">
-        
         <header class="flex justify-between items-center mb-8">
-            <button class="w-12 h-12 bg-[#00002A] rounded-xl flex flex-col justify-center items-center gap-1.5 border border-[#D4AF37]" onclick="toggleMenu()">
+            <button class="w-12 h-12 bg-[#00002A] rounded-xl flex flex-col justify-center items-center gap-1.5 border border-[#D4AF37]" onclick="toggleMenu()" aria-label="فتح القائمة">
                 <div class="w-6 h-0.5 bg-[#D4AF37]"></div><div class="w-6 h-0.5 bg-[#D4AF37]"></div><div class="w-6 h-0.5 bg-[#D4AF37]"></div>
             </button>
             <div class="text-right">
                 <h1 class="text-2xl font-black text-[#00002A]">The Compass</h1>
                 <p class="text-[10px] text-[#D4AF37] font-bold tracking-widest">الوعي المالي والوضوح الرقمي</p>
             </div>
-            <div class="w-12 h-12 dark-card flex items-center justify-center text-xl font-black text-[#D4AF37] border border-[#D4AF37] shadow">H</div>
+            <!-- نفس مربع H، الآن نقرة واحدة تسجّل الخروج -->
+            <button class="w-12 h-12 dark-card flex items-center justify-center text-xl font-black text-[#D4AF37] border border-[#D4AF37] shadow" onclick="confirmSignOut()" title="الحساب / تسجيل الخروج">H</button>
         </header>
 
         <div id="section-dashboard" class="space-y-4">
@@ -200,7 +440,7 @@
 
         <div id="section-sovereign" class="hidden space-y-6">
             <h2 class="text-xl font-black text-[#00002A] mb-4 border-r-4 border-[#D4AF37] pr-2">قائمة المركز المالي</h2>
-            
+
             <div class="space-y-3 bg-white p-4 rounded-[35px] border border-slate-100 shadow-sm">
                 <div class="balance-card card-assets">
                     <span id="asset-total" class="font-black text-2xl text-[#00002A]">$0</span>
@@ -214,9 +454,7 @@
                 </div>
                 <div class="overflow-hidden rounded-xl border border-slate-100 text-[11px] mt-2">
                     <table class="w-full text-right bg-slate-50/50">
-                        <thead class="bg-slate-100/70 text-slate-600 font-bold">
-                            <tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24">القيمة</th><th class="p-2">البند</th></tr>
-                        </thead>
+                        <thead class="bg-slate-100/70 text-slate-600 font-bold"><tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24">القيمة</th><th class="p-2">البند</th></tr></thead>
                         <tbody id="table-assets-body"></tbody>
                     </table>
                 </div>
@@ -235,9 +473,7 @@
                 </div>
                 <div class="overflow-hidden rounded-xl border border-slate-100 text-[11px] mt-2">
                     <table class="w-full text-right bg-slate-50/50">
-                        <thead class="bg-slate-100/70 text-slate-600 font-bold">
-                            <tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24">القيمة</th><th class="p-2">البند</th></tr>
-                        </thead>
+                        <thead class="bg-slate-100/70 text-slate-600 font-bold"><tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24">القيمة</th><th class="p-2">البند</th></tr></thead>
                         <tbody id="table-liab-body"></tbody>
                     </table>
                 </div>
@@ -256,9 +492,7 @@
                 </div>
                 <div class="overflow-hidden rounded-xl border border-slate-100 text-[11px] mt-2">
                     <table class="w-full text-right bg-slate-50/50">
-                        <thead class="bg-slate-100/70 text-slate-600 font-bold">
-                            <tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24">القيمة</th><th class="p-2">البند</th></tr>
-                        </thead>
+                        <thead class="bg-slate-100/70 text-slate-600 font-bold"><tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24">القيمة</th><th class="p-2">البند</th></tr></thead>
                         <tbody id="table-equity-body"></tbody>
                     </table>
                 </div>
@@ -275,7 +509,7 @@
                     <input type="number" id="calc-price" oninput="calcProfit()" placeholder="سعر البيع  ($)" class="w-full p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:border-[#D4AF37]">
                     <input type="number" id="calc-cost" oninput="calcProfit()" placeholder="تكلفة المنتج (COGS)" class="w-full p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:border-[#D4AF37]">
                     <input type="number" id="calc-opex" oninput="calcProfit()" placeholder="التغليف، التوصيل، والتسويق (OPEX)" class="w-full p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:border-[#D4AF37]">
-                    
+
                     <div class="p-5 bg-amber-50 rounded-2xl flex justify-between items-center border border-amber-100">
                         <div>
                             <p class="text-xs text-amber-800 font-bold mb-1"> هامش الربح</p>
@@ -309,31 +543,447 @@
             </div>
         </div>
     </div>
-  
+
     <footer class="text-center py-8 opacity-50">
         <p class="text-[10px] font-bold text-[#103058] tracking-widest">©️ 2026 بوصلة هدايه | HEDAYA'S COMPASS</p>
         <p class="text-[9px] text-[#071c38] mt-1">جميع الحقوق محفوظة لـ هدايه عودات</p>
     </footer>
 
+    <script>
+        /* ==============================
+           SUPABASE CONNECTION
+           ============================== */
+        const SUPABASE_URL = 'https://pujpztniyyhucfmtqwnp.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_V-_n9DECT8ZwkfU7h-EuKQ_rZxUh9bQ';
+        let compassClient = null;
+        let supabaseReady = false;
 
-    <script>    
-        // نظام الدخول وفك القفل برقم PIN: 2003
-        function checkHedaiaLock() {
-            if (document.getElementById('hedaya-pin').value === "2003") {
-                const screen = document.getElementById('hedaya-lock-screen');
-                screen.style.opacity = '0';
-                setTimeout(() => { screen.style.display = 'none'; updateUI(); }, 600);
-            } else { document.getElementById('error-msg-h').classList.remove('hidden'); }
+        function setConnectionStatus(text, type = '') {
+            const el = document.getElementById('connection-status');
+            if (!el) return;
+            el.textContent = text;
+            el.className = `connection-status ${type}`;
         }
 
-        let records = JSON.parse(localStorage.getItem('hedaya_v7_flexible')) || [];
-        let myChart = null;
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.async = true;
+                script.onload = resolve;
+                script.onerror = () => reject(new Error('تعذر تحميل مكتبة Supabase.'));
+                document.head.appendChild(script);
+            });
+        }
 
-        function saveToStorage() {
-            localStorage.setItem('hedaya_v7_flexible', JSON.stringify(records));
+        async function loadSupabaseLibrary() {
+            if (window.supabase?.createClient) return;
+            try {
+                await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+            } catch (firstError) {
+                await loadScript('https://unpkg.com/@supabase/supabase-js@2');
+            }
+            if (!window.supabase?.createClient) throw new Error('تعذر تحميل Supabase.');
+        }
+
+        function getRedirectUrl() {
+            return /^https?:$/.test(window.location.protocol)
+                ? window.location.href.split('#')[0]
+                : null;
+        }
+
+        const LOCAL_LEGACY_KEY = 'hedaya_v7_flexible';
+        let records = [];
+        let currentUser = null;
+        let myChart = null;
+        let isHandlingAuth = false;
+
+
+        /* ==============================
+           AUTH UI
+           ============================== */
+        function setAuthMessage(id, text, type = '') {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = text || '';
+            el.className = `auth-message ${type}`;
+        }
+
+        function clearAuthMessages() {
+            ['auth-message', 'forgot-message', 'reset-message'].forEach(id => setAuthMessage(id, ''));
+        }
+
+        function switchAuthMode(mode) {
+            clearAuthMessages();
+            document.getElementById('auth-main-view').classList.remove('auth-hidden');
+            document.getElementById('forgot-view').classList.add('auth-hidden');
+            document.getElementById('reset-view').classList.add('auth-hidden');
+
+            const isSignup = mode === 'signup';
+            document.getElementById('tab-login').classList.toggle('active', !isSignup);
+            document.getElementById('tab-signup').classList.toggle('active', isSignup);
+            document.getElementById('signup-password-confirm').classList.toggle('auth-hidden', !isSignup);
+            document.getElementById('forgot-wrap').classList.toggle('auth-hidden', isSignup);
+            document.getElementById('auth-submit').textContent = isSignup ? 'إنشاء الحساب' : 'دخول';
+            document.getElementById('auth-password').autocomplete = isSignup ? 'new-password' : 'current-password';
+            document.getElementById('auth-kicker').textContent = isSignup
+                ? 'أنشئي حسابك الخاص وابدئي مساحتك المالية.'
+                : 'مساحتك المالية الخاصة، بحسابك أنت.';
+            document.getElementById('auth-submit').dataset.mode = mode;
+        }
+
+        function showForgotPassword() {
+            clearAuthMessages();
+            document.getElementById('auth-main-view').classList.add('auth-hidden');
+            document.getElementById('forgot-view').classList.remove('auth-hidden');
+            document.getElementById('reset-view').classList.add('auth-hidden');
+            const existingEmail = document.getElementById('auth-email').value.trim();
+            document.getElementById('forgot-email').value = existingEmail;
+            setTimeout(() => document.getElementById('forgot-email').focus(), 50);
+        }
+
+        function backToAuth() {
+            clearAuthMessages();
+            document.getElementById('auth-main-view').classList.remove('auth-hidden');
+            document.getElementById('forgot-view').classList.add('auth-hidden');
+            document.getElementById('reset-view').classList.add('auth-hidden');
+            switchAuthMode('login');
+        }
+
+        function showResetPasswordView() {
+            clearAuthMessages();
+            document.getElementById('auth-main-view').classList.add('auth-hidden');
+            document.getElementById('forgot-view').classList.add('auth-hidden');
+            document.getElementById('reset-view').classList.remove('auth-hidden');
+        }
+
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.type = input.type === 'password' ? 'text' : 'password';
+            button.textContent = input.type === 'password' ? '◉' : '◌';
+        }
+
+        function friendlyAuthError(error) {
+            const msg = (error?.message || '').toLowerCase();
+            if (msg.includes('invalid login credentials')) return 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+            if (msg.includes('email not confirmed')) return 'يرجى تأكيد بريدك الإلكتروني أولًا من الرسالة التي أرسلناها لكِ.';
+            if (msg.includes('user already registered')) return 'هذا البريد مسجّل بالفعل. جرّبي تسجيل الدخول بدلًا من إنشاء حساب جديد.';
+            if (msg.includes('password should be at least')) return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل. نفضّل استخدام كلمة أقوى.';
+            if (msg.includes('rate limit')) return 'تم الوصول إلى حد الإرسال مؤقتًا. جرّبي مرة أخرى لاحقًا.';
+            if (msg.includes('same password')) return 'اختاري كلمة مرور مختلفة عن السابقة.';
+            if (msg.includes('network')) return 'تعذر الاتصال بالإنترنت. تحققي من الاتصال ثم جرّبي مرة أخرى.';
+            return error?.message || 'حدث خطأ غير متوقع. جرّبي مرة أخرى.';
+        }
+
+        function setButtonLoading(button, loading, text) {
+            if (!button) return;
+            button.disabled = loading;
+            if (loading) {
+                button.dataset.originalText = button.textContent;
+                button.innerHTML = `<span class="auth-loader"></span>${text || 'جارٍ التنفيذ...'}`;
+            } else {
+                button.textContent = button.dataset.originalText || text || 'متابعة';
+            }
+        }
+
+        async function submitAuth() {
+            if (!supabaseReady || !compassClient) {
+                setAuthMessage('auth-message', 'نظام الدخول لم يجهز بعد. تحققي من اتصال الإنترنت ثم حاولي مرة أخرى.', 'error');
+                return;
+            }
+            const mode = document.getElementById('auth-submit').dataset.mode || 'login';
+            const email = document.getElementById('auth-email').value.trim().toLowerCase();
+            const password = document.getElementById('auth-password').value;
+            const confirm = document.getElementById('auth-password-confirm').value;
+            const button = document.getElementById('auth-submit');
+            clearAuthMessages();
+
+            if (!email || !email.includes('@')) {
+                setAuthMessage('auth-message', 'أدخلي بريدًا إلكترونيًا صحيحًا.', 'error');
+                return;
+            }
+            if (password.length < 6) {
+                setAuthMessage('auth-message', 'كلمة المرور يجب أن تكون 6 أحرف على الأقل.', 'error');
+                return;
+            }
+            if (mode === 'signup' && password !== confirm) {
+                setAuthMessage('auth-message', 'كلمتا المرور غير متطابقتين.', 'error');
+                return;
+            }
+
+            setButtonLoading(button, true, mode === 'signup' ? 'جارٍ إنشاء الحساب...' : 'جارٍ الدخول...');
+
+            try {
+                if (mode === 'signup') {
+                    const redirectUrl = getRedirectUrl();
+                    const signUpOptions = redirectUrl ? { emailRedirectTo: redirectUrl } : undefined;
+                    const { data, error } = await compassClient.auth.signUp({
+                        email,
+                        password,
+                        ...(signUpOptions ? { options: signUpOptions } : {})
+                    });
+                    if (error) throw error;
+
+                    if (data.session) {
+                        await handleSignedIn(data.session);
+                    } else {
+                        setAuthMessage('auth-message', 'تم إنشاء الحساب. افتحي بريدك الإلكتروني واضغطي رابط التأكيد ثم عودي للأداة.', 'success');
+                    }
+                } else {
+                    const { data, error } = await compassClient.auth.signInWithPassword({ email, password });
+                    if (error) throw error;
+                    if (data.session) await handleSignedIn(data.session);
+                }
+            } catch (error) {
+                setAuthMessage('auth-message', friendlyAuthError(error), 'error');
+            } finally {
+                setButtonLoading(button, false);
+            }
+        }
+
+        async function sendResetEmail() {
+            if (!supabaseReady || !compassClient) {
+                setAuthMessage('forgot-message', 'نظام الدخول لم يجهز بعد. تحققي من اتصال الإنترنت ثم حاولي مرة أخرى.', 'error');
+                return;
+            }
+            const email = document.getElementById('forgot-email').value.trim().toLowerCase();
+            const button = document.getElementById('forgot-submit');
+            setAuthMessage('forgot-message', '');
+            if (!email || !email.includes('@')) {
+                setAuthMessage('forgot-message', 'أدخلي بريدًا إلكترونيًا صحيحًا.', 'error');
+                return;
+            }
+
+            setButtonLoading(button, true, 'جارٍ الإرسال...');
+            try {
+                const redirectUrl = getRedirectUrl();
+                const { error } = await compassClient.auth.resetPasswordForEmail(
+                    email,
+                    redirectUrl ? { redirectTo: redirectUrl } : undefined
+                );
+                if (error) throw error;
+                setAuthMessage('forgot-message', 'تم إرسال رابط الاستعادة إلى بريدك الإلكتروني. افتحيه لإكمال التغيير.', 'success');
+            } catch (error) {
+                setAuthMessage('forgot-message', friendlyAuthError(error), 'error');
+            } finally {
+                setButtonLoading(button, false);
+            }
+        }
+
+        async function updatePassword() {
+            if (!supabaseReady || !compassClient) {
+                setAuthMessage('reset-message', 'نظام الدخول لم يجهز بعد. افتحي رابط الاستعادة من بريدك عبر نسخة الويب.', 'error');
+                return;
+            }
+            const password = document.getElementById('reset-password').value;
+            const confirm = document.getElementById('reset-password-confirm').value;
+            const button = document.getElementById('reset-submit');
+            setAuthMessage('reset-message', '');
+
+            if (password.length < 6) {
+                setAuthMessage('reset-message', 'كلمة المرور يجب أن تكون 6 أحرف على الأقل.', 'error');
+                return;
+            }
+            if (password !== confirm) {
+                setAuthMessage('reset-message', 'كلمتا المرور غير متطابقتين.', 'error');
+                return;
+            }
+
+            setButtonLoading(button, true, 'جارٍ الحفظ...');
+            try {
+                const { error } = await compassClient.auth.updateUser({ password });
+                if (error) throw error;
+                setAuthMessage('reset-message', 'تم تحديث كلمة المرور بنجاح. جارٍ فتح حسابك...', 'success');
+                setTimeout(async () => {
+                    const { data } = await compassClient.auth.getSession();
+                    if (data.session) await handleSignedIn(data.session);
+                }, 700);
+            } catch (error) {
+                setAuthMessage('reset-message', friendlyAuthError(error), 'error');
+            } finally {
+                setButtonLoading(button, false);
+            }
+        }
+
+        function showApp() {
+            const screen = document.getElementById('hedaya-lock-screen');
+            screen.style.opacity = '0';
+            setTimeout(() => {
+                screen.style.display = 'none';
+            }, 450);
+        }
+
+        function showLock() {
+            const screen = document.getElementById('hedaya-lock-screen');
+            screen.style.display = 'flex';
+            requestAnimationFrame(() => { screen.style.opacity = '1'; });
+            switchAuthMode('login');
+        }
+
+        async function handleSignedIn(session) {
+            if (!session?.user || isHandlingAuth) return;
+            isHandlingAuth = true;
+            try {
+                currentUser = session.user;
+                await migrateLegacyDataOnce();
+                await loadRecords();
+                showApp();
+                updateUI();
+            } catch (error) {
+                console.error('Compass load error:', error);
+                alert('تم تسجيل الدخول، لكن تعذر تحميل بيانات الأداة الآن. تحققي من إعدادات قاعدة البيانات ثم أعيدي المحاولة.');
+            } finally {
+                isHandlingAuth = false;
+            }
+        }
+
+        async function confirmSignOut() {
+            if (!currentUser) return;
+            const ok = confirm('هل تريدين تسجيل الخروج من The Compass؟');
+            if (!ok) return;
+            const { error } = await compassClient.auth.signOut();
+            if (error) {
+                alert('تعذر تسجيل الخروج. حاولي مرة أخرى.');
+                return;
+            }
+            records = [];
+            currentUser = null;
+            if (myChart) {
+                myChart.destroy();
+                myChart = null;
+            }
+            showLock();
+        }
+
+        /* ==============================
+           DATA / SUPABASE
+           ============================== */
+        async function loadRecords() {
+            if (!currentUser) return;
+            const { data, error } = await compassClient
+                .from('financial_records')
+                .select('id, user_id, name, amount, type, category, created_at')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            records = (data || []).map(r => ({
+                id: r.id,
+                name: r.name,
+                amount: Number(r.amount),
+                type: r.type,
+                category: r.category,
+                date: r.created_at
+            }));
+        }
+
+        async function insertRecord(record) {
+            if (!currentUser) {
+                showLock();
+                return null;
+            }
+            const payload = {
+                user_id: currentUser.id,
+                name: record.name,
+                amount: Number(record.amount),
+                type: record.type,
+                category: record.category || null,
+                created_at: record.date ? new Date(record.date).toISOString() : new Date().toISOString()
+            };
+            const { data, error } = await compassClient
+                .from('financial_records')
+                .insert(payload)
+                .select('id, user_id, name, amount, type, category, created_at')
+                .single();
+
+            if (error) throw error;
+
+            return {
+                id: data.id,
+                name: data.name,
+                amount: Number(data.amount),
+                type: data.type,
+                category: data.category,
+                date: data.created_at
+            };
+        }
+
+        async function deleteRecord(i) {
+            if (!currentUser || !records[i]) return;
+            if (!confirm('هل أنت متأكد من حذف هذا البند؟')) return;
+
+            const record = records[i];
+            const { error } = await compassClient
+                .from('financial_records')
+                .delete()
+                .eq('id', record.id)
+                .eq('user_id', currentUser.id);
+
+            if (error) {
+                console.error(error);
+                alert('تعذر حذف السجل.');
+                return;
+            }
+
+            records.splice(i, 1);
             updateUI();
         }
 
+        /* نقل بيانات النسخة القديمة مرة واحدة فقط للحساب الذي يسجل من نفس الجهاز */
+        async function migrateLegacyDataOnce() {
+            if (!currentUser) return;
+
+            const migrationKey = `hedaya_compass_migrated_${currentUser.id}`;
+            if (localStorage.getItem(migrationKey) === 'done') return;
+
+            const legacyRaw = localStorage.getItem(LOCAL_LEGACY_KEY);
+            if (!legacyRaw) {
+                localStorage.setItem(migrationKey, 'done');
+                return;
+            }
+
+            let legacyRecords;
+            try {
+                legacyRecords = JSON.parse(legacyRaw);
+            } catch {
+                return;
+            }
+            if (!Array.isArray(legacyRecords) || legacyRecords.length === 0) {
+                localStorage.setItem(migrationKey, 'done');
+                return;
+            }
+
+            const alreadyHasData = await compassClient
+                .from('financial_records')
+                .select('id', { count: 'exact', head: true });
+
+            if (alreadyHasData.error) throw alreadyHasData.error;
+            if ((alreadyHasData.count || 0) > 0) {
+                localStorage.setItem(migrationKey, 'done');
+                localStorage.removeItem(LOCAL_LEGACY_KEY);
+                return;
+            }
+
+            const payload = legacyRecords.map(r => ({
+                user_id: currentUser.id,
+                name: String(r.name || 'سجل مالي'),
+                amount: Number(r.amount || 0),
+                type: String(r.type || 'direct-balance'),
+                category: r.category ? String(r.category) : null,
+                created_at: r.date ? new Date(r.date).toISOString() : new Date().toISOString()
+            }));
+
+            const { error } = await compassClient.from('financial_records').insert(payload);
+            if (error) throw error;
+
+            localStorage.setItem(migrationKey, 'done');
+            localStorage.removeItem(LOCAL_LEGACY_KEY);
+        }
+
+        /* ==============================
+           ORIGINAL COMPASS FUNCTIONS
+           ============================== */
         function toggleMenu() {
             document.getElementById('side-menu').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('hidden');
@@ -343,64 +993,70 @@
             document.querySelectorAll('[id^="section-"]').forEach(s => s.classList.add('hidden'));
             document.getElementById('section-' + id).classList.remove('hidden');
             document.querySelectorAll('.nav-icon-link').forEach(link => link.classList.remove('active'));
-            if(element) element.classList.add('active');
-            if(document.getElementById('side-menu').classList.contains('open')) toggleMenu();
+            if (element) element.classList.add('active');
+            if (document.getElementById('side-menu').classList.contains('open')) toggleMenu();
             updateUI();
         }
 
-        // دالة الإدخال المرن للزيادة والنقصان المستقلين
-        function quickAddFlexible(categoryType, descId, amountId, actionType) {
+        async function quickAddFlexible(categoryType, descId, amountId, actionType) {
             const amtInput = document.getElementById(amountId);
             const descInput = document.getElementById(descId);
-            
             let amt = parseFloat(amtInput.value);
             const desc = descInput.value || `بند ${categoryType}`;
 
             if (isNaN(amt) || amt <= 0) {
-                alert("يرجى كتابة سعر ومبلغ صحيح أولاً.");
+                alert('يرجى كتابة سعر ومبلغ صحيح أولاً.');
                 return;
             }
+            if (actionType === 'minus') amt = -amt;
 
-            if (actionType === 'minus') {
-                amt = -amt;
+            try {
+                const saved = await insertRecord({
+                    name: desc,
+                    amount: amt,
+                    type: 'direct-balance',
+                    category: categoryType,
+                    date: Date.now()
+                });
+                if (!saved) return;
+                records.unshift(saved);
+                amtInput.value = '';
+                descInput.value = '';
+                updateUI();
+            } catch (error) {
+                console.error(error);
+                alert('تعذر حفظ الحركة. تحققي من الاتصال وقاعدة البيانات.');
             }
-
-            records.unshift({
-                id: Date.now(),
-                name: desc, 
-                amount: amt, 
-                type: 'direct-balance', 
-                category: categoryType, 
-                date: Date.now()
-            });
-
-            amtInput.value = '';
-            descInput.value = '';
-            saveToStorage();
         }
 
-        function addTrade() {
+        async function addTrade() {
             const price = parseFloat(document.getElementById('item-price').value) || 0;
             const qty = parseFloat(document.getElementById('item-qty').value) || 1;
             const type = document.getElementById('sale-type').value;
-            const party = document.getElementById('party-name').value || "عملية تجارية";
+            const party = document.getElementById('party-name').value || 'عملية تجارية';
 
-            if(price <= 0) { alert("حدد السعر من فضلك."); return; }
+            if (price <= 0) { alert('حدد السعر من فضلك.'); return; }
 
-            records.unshift({ 
-                id: Date.now(),
-                name: party, 
-                amount: qty * price, 
-                type: type, 
-                date: Date.now() 
-            });
+            try {
+                const saved = await insertRecord({
+                    name: party,
+                    amount: qty * price,
+                    type,
+                    date: Date.now()
+                });
+                if (!saved) return;
+                records.unshift(saved);
 
-            document.getElementById('item-price').value = '';
-            document.getElementById('item-qty').value = '';
-            document.getElementById('party-name').value = '';
+                document.getElementById('item-price').value = '';
+                document.getElementById('item-qty').value = '';
+                document.getElementById('party-name').value = '';
 
-            showSection('dashboard', document.querySelector('.nav-icon-link:first-child'));
-            saveToStorage();
+                showSection('dashboard', document.querySelector('.nav-icon-link:first-child'));
+                updateUI();
+            } catch (error) {
+                console.error(error);
+                alert('تعذر حفظ الحركة التجارية.');
+            }
         }
 
         function calcProfit() {
@@ -409,67 +1065,69 @@
             const opex = parseFloat(document.getElementById('calc-opex').value) || 0;
             const netProfit = price - (cost + opex);
             const margin = price > 0 ? (netProfit / price) * 100 : 0;
-            
+
             document.getElementById('calc-net').innerText = netProfit.toLocaleString();
-            document.getElementById('calc-margin').innerText = margin.toFixed(0) + "%";
+            document.getElementById('calc-margin').innerText = margin.toFixed(0) + '%';
         }
 
-        // إصلاح وتأمين دالة ترحيل تحليل الربحية للوحة الرئيسية
-        function saveProfitEntry() {
-            const client = document.getElementById('calc-client').value || "تحليل أرباح صفقة";
+        async function saveProfitEntry() {
+            const client = document.getElementById('calc-client').value || 'تحليل أرباح صفقة';
             const price = parseFloat(document.getElementById('calc-price').value) || 0;
             const cost = parseFloat(document.getElementById('calc-cost').value) || 0;
             const opex = parseFloat(document.getElementById('calc-opex').value) || 0;
 
-            if (price <= 0) { alert("يرجى تحديد سعر البيع أولاً"); return; }
+            if (price <= 0) { alert('يرجى تحديد سعر البيع أولاً'); return; }
 
-            // ترحيل قيمة الإيراد
-            records.unshift({
-                id: Date.now(),
-                name: `إيراد صفقة: ${client}`,
-                amount: price,
-                type: 'sale',
-                date: Date.now()
-            });
-
-            // ترحيل المصاريف الكلية كنفقة منفصلة إن وجدت
-            const totalExp = cost + opex;
-            if (totalExp > 0) {
-                records.unshift({
-                    id: Date.now() + 1,
-                    name: `نفقات وتكاليف صفقة: ${client}`,
-                    amount: totalExp,
-                    type: 'purchase',
+            try {
+                const revenue = await insertRecord({
+                    name: `إيراد صفقة: ${client}`,
+                    amount: price,
+                    type: 'sale',
                     date: Date.now()
                 });
+                if (revenue) records.unshift(revenue);
+
+                const totalExp = cost + opex;
+                if (totalExp > 0) {
+                    const expense = await insertRecord({
+                        name: `نفقات وتكاليف صفقة: ${client}`,
+                        amount: totalExp,
+                        type: 'purchase',
+                        date: Date.now() + 1
+                    });
+                    if (expense) records.unshift(expense);
+                }
+
+                document.getElementById('calc-client').value = '';
+                document.getElementById('calc-price').value = '';
+                document.getElementById('calc-cost').value = '';
+                document.getElementById('calc-opex').value = '';
+                calcProfit();
+
+                showSection('dashboard', document.querySelector('.nav-icon-link:first-child'));
+                updateUI();
+            } catch (error) {
+                console.error(error);
+                alert('تعذر حفظ تحليل الربحية.');
             }
-
-            document.getElementById('calc-client').value = '';
-            document.getElementById('calc-price').value = '';
-            document.getElementById('calc-cost').value = '';
-            document.getElementById('calc-opex').value = '';
-            calcProfit();
-
-            showSection('dashboard', document.querySelector('.nav-icon-link:first-child'));
-            saveToStorage();
         }
 
         function updateUI() {
             let inflow = 0, outflow = 0, assets = 0, liabs = 0, equity = 0;
-            
+
             const log = document.getElementById('records-list');
             const tAssets = document.getElementById('table-assets-body');
             const tLiab = document.getElementById('table-liab-body');
             const tEquity = document.getElementById('table-equity-body');
-
             if (!log) return;
+
             log.innerHTML = '';
             if (tAssets) tAssets.innerHTML = '';
             if (tLiab) tLiab.innerHTML = '';
             if (tEquity) tEquity.innerHTML = '';
 
             records.forEach((r, i) => {
-                const amt = r.amount;
+                const amt = Number(r.amount) || 0;
                 const isPositive = amt >= 0;
                 const formattedAmt = (isPositive ? '+$' : '-$') + Math.abs(amt).toLocaleString();
                 const textColorClass = isPositive ? 'text-emerald-600' : 'text-red-500';
@@ -479,7 +1137,7 @@
                         <tr>
                             <td class="p-2 text-center text-red-400 font-bold cursor-pointer hover:text-red-600 transition-colors" onclick="deleteRecord(${i})">✕</td>
                             <td class="p-2 text-center font-black ${textColorClass}">${formattedAmt}</td>
-                            <td class="p-2 font-bold text-slate-700">${r.name}</td>
+                            <td class="p-2 font-bold text-slate-700">${escapeHtml(r.name)}</td>
                         </tr>`;
 
                     if (r.category === 'asset') {
@@ -493,8 +1151,8 @@
                         if (tEquity) tEquity.innerHTML += rowHTML;
                     }
                 } else {
-                    if(r.type === 'sale') { inflow += amt; assets += amt; equity += amt; } 
-                    else if(r.type === 'purchase') { outflow += amt; assets -= amt; equity -= amt; }
+                    if (r.type === 'sale') { inflow += amt; assets += amt; equity += amt; }
+                    else if (r.type === 'purchase') { outflow += amt; assets -= amt; equity -= amt; }
                 }
 
                 const d = new Date(r.date || Date.now());
@@ -503,7 +1161,7 @@
                         <button onclick="deleteRecord(${i})" class="text-red-400 font-bold text-sm px-1 hover:text-red-600">✕</button>
                         <span class="font-black ${textColorClass}">${formattedAmt}</span>
                         <div class="text-right flex-1 pr-3">
-                            <p class="font-bold text-slate-700">${r.name}</p>
+                            <p class="font-bold text-slate-700">${escapeHtml(r.name)}</p>
                             <p class="text-[9px] text-slate-400">${d.toLocaleDateString('ar-EG')}</p>
                         </div>
                     </div>`;
@@ -511,37 +1169,40 @@
 
             document.getElementById('display-inflow').innerText = inflow.toLocaleString();
             document.getElementById('display-outflow').innerText = outflow.toLocaleString();
-            
             document.getElementById('asset-total').innerText = (assets >= 0 ? '$' : '-$') + Math.abs(assets).toLocaleString();
             document.getElementById('liab-total').innerText = (liabs >= 0 ? '$' : '-$') + Math.abs(liabs).toLocaleString();
             document.getElementById('equity-total').innerText = (equity >= 0 ? '$' : '-$') + Math.abs(equity).toLocaleString();
-            
+
             const difference = assets - (liabs + equity);
             const checkEl = document.getElementById('equation-check');
             if (checkEl) {
                 if (Math.abs(difference) < 0.1) {
-                    checkEl.innerText = "الميزانية متطابقة ومتوازنة تماماً بموجب مدخلاتك الحالية ✓";
-                    checkEl.style.color = "#10b981"; checkEl.style.backgroundColor = "#ecfdf5";
+                    checkEl.innerText = 'الميزانية متطابقة ومتوازنة تماماً بموجب مدخلاتك الحالية ✓';
+                    checkEl.style.color = '#10b981';
+                    checkEl.style.backgroundColor = '#ecfdf5';
                 } else {
-                    checkEl.innerText = "الفارق أو الفجوة الحالية بين البنود المدخلة: " + (difference >= 0 ? '' : '-') + "$" + Math.abs(difference).toLocaleString();
-                    checkEl.style.color = "#ef4444"; checkEl.style.backgroundColor = "#fef2f2";
+                    checkEl.innerText = 'الفارق أو الفجوة الحالية بين البنود المدخلة: ' + (difference >= 0 ? '' : '-') + '$' + Math.abs(difference).toLocaleString();
+                    checkEl.style.color = '#ef4444';
+                    checkEl.style.backgroundColor = '#fef2f2';
                 }
             }
             initChart(assets, liabs, equity);
         }
 
-        function deleteRecord(i) { 
-            if(confirm("هل أنت متأكد من حذف هذا البند؟")) {
-                records.splice(i, 1); 
-                saveToStorage(); 
-            }
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
         }
 
         function initChart(assets, liabs, equity) {
             const ctx = document.getElementById('financeChart');
             if (!ctx) return;
-            if (myChart) { myChart.destroy(); }
-            
+            if (myChart) myChart.destroy();
+
             const chartData = (assets === 0 && liabs === 0 && equity === 0) ? [1, 0, 0] : [Math.abs(assets), Math.abs(liabs), Math.abs(equity)];
 
             myChart = new Chart(ctx, {
@@ -563,22 +1224,26 @@
         }
 
         function exportExcel() {
-            if (records.length === 0) return alert("لا توجد بيانات لتصديرها");
+            if (records.length === 0) return alert('لا توجد بيانات لتصديرها');
 
             const printWindow = window.open('', '_blank');
-            
+            if (!printWindow) {
+                alert('يرجى السماح بالنوافذ المنبثقة حتى يتم فتح التقرير.');
+                return;
+            }
+
             let tableRows = records.map((r, index) => {
                 const d = new Date(r.date || Date.now());
                 const dateStr = d.toLocaleDateString('ar-EG');
                 const typeAr = r.type === 'sale' ? 'إيرادات' : (r.type === 'purchase' ? 'نفقات' : 'قيد تسوية');
-                
+
                 return `
                     <tr>
                         <td style="width: 5%;">${index + 1}</td>
                         <td style="width: 20%;">${dateStr}</td>
-                        <td style="width: 45%; text-align: right; padding-right: 15px;">${r.name}</td>
+                        <td style="width: 45%; text-align: right; padding-right: 15px;">${escapeHtml(r.name)}</td>
                         <td style="width: 15%;">${typeAr}</td>
-                        <td style="width: 15%; font-weight: bold;">$${r.amount.toLocaleString()}</td>
+                        <td style="width: 15%; font-weight: bold;">$${Number(r.amount).toLocaleString()}</td>
                     </tr>`;
             }).join('');
 
@@ -599,29 +1264,81 @@
                     </style>
                 </head>
                 <body>
-                    <div class="report-header">
-                        <h2>سجل الحركات المالية والقيود - بوصلة هدايه</h2>
-                    </div>
+                    <div class="report-header"><h2>سجل الحركات المالية والقيود - بوصلة هدايه</h2></div>
                     <button class="no-print-btn" onclick="window.print()">طباعة التقرير / حفظ PDF</button>
                     <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>التاريخ</th>
-                                <th>البيان / تفاصيل الحركة</th>
-                                <th>نوع الحركة</th>
-                                <th>القيمة المالية</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${tableRows}
-                        </tbody>
+                        <thead><tr><th>#</th><th>التاريخ</th><th>البيان / تفاصيل الحركة</th><th>نوع الحركة</th><th>القيمة المالية</th></tr></thead>
+                        <tbody>${tableRows}</tbody>
                     </table>
                 </body>
                 </html>
             `);
             printWindow.document.close();
         }
+
+        /* ==============================
+           INITIAL AUTH BOOT
+           ============================== */
+        async function initializeCompassAuth() {
+            try {
+                setConnectionStatus('جاري الاتصال الآمن...', 'loading');
+                await loadSupabaseLibrary();
+                compassClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+                    auth: {
+                        autoRefreshToken: true,
+                        persistSession: true,
+                        detectSessionInUrl: true,
+                        flowType: 'pkce'
+                    }
+                });
+                supabaseReady = true;
+                setConnectionStatus('الاتصال الآمن جاهز', 'ready');
+
+                compassClient.auth.onAuthStateChange((event, session) => {
+                    if (event === 'PASSWORD_RECOVERY') {
+                        showResetPasswordView();
+                        return;
+                    }
+                    if (event === 'SIGNED_OUT') {
+                        currentUser = null;
+                        records = [];
+                        showLock();
+                        return;
+                    }
+                    if (session && (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
+                        setTimeout(() => handleSignedIn(session), 0);
+                    }
+                });
+
+                switchAuthMode('login');
+                const { data, error } = await compassClient.auth.getSession();
+                if (error) throw error;
+                if (data.session) {
+                    await handleSignedIn(data.session);
+                } else {
+                    showLock();
+                }
+            } catch (error) {
+                console.error('Auth bootstrap error:', error);
+                supabaseReady = false;
+                showLock();
+                setConnectionStatus('تعذر الاتصال بالخدمة', 'error');
+                setAuthMessage('auth-message', 'لم يتم تشغيل تسجيل الدخول. تأكدي من اتصال الإنترنت، ثم افتحي الملف مرة أخرى بعد رفعه على رابط HTTPS.', 'error');
+            }
+        }
+
+        initializeCompassAuth();
+
+        /* Enter للتسجيل من حقلي البريد/كلمة المرور */
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter') return;
+            const active = document.activeElement;
+            if (active?.id === 'auth-email' || active?.id === 'auth-password' || active?.id === 'auth-password-confirm') {
+                submitAuth();
+            }
+            if (active?.id === 'forgot-email') sendResetEmail();
+            if (active?.id === 'reset-password-confirm') updatePassword();
+        });
     </script>
 </body>
 </html>
