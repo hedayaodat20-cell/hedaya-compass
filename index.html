@@ -5,15 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Compass - الوعي المالي والوضوح الرقمي</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00002A">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="البوصلة">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&text=H&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #fcfaf7;
+            background-color: #F6F1E7;
             color: #1a1a1a;
             margin: 0;
             overflow-x: hidden;
@@ -23,9 +32,13 @@
             --gold-primary: #D4AF37;
             --gold-light: #F1E5AC;
             --deep-sea: #1A3F75;
+            --ivory: #FBF8F1;
+            --ivory-soft: #FDFAF4;
+            --ivory-input: #F5EFE3;
+            --beige-border: #E9DFCB;
         }
 
-        /* شاشة الدخول الجديدة — نفس هوية مربع H، بتصميم فاخر */
+        /* شاشة الدخول — مربع البوصلة، بتصميم فاخر */
         #hedaya-lock-screen {
             position: fixed;
             inset: 0;
@@ -225,6 +238,47 @@
             line-height: 1.8;
         }
         .auth-hidden { display: none !important; }
+        /* توقيع H صغير بالزاوية */
+        .h-signature {
+            font-family: 'Great Vibes', 'Snell Roundhand', 'Brush Script MT', 'Times New Roman', serif;
+            font-style: italic;
+            color: var(--gold-primary);
+            display: inline-block;
+            transform: rotate(-12deg);
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+        .auth-signature-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            min-height: 26px;
+        }
+        .auth-signature-row .h-signature { font-size: 34px; opacity: 0.75; margin-left: 4px; }
+        .activate-input { text-align: center; letter-spacing: 2px; font-weight: 800; text-transform: uppercase; direction: ltr; }
+        .activate-links { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 4px; }
+        .activate-wa { color: var(--gold-light); font-size: 12px; font-weight: 800; text-decoration: none; }
+        .activate-wa:hover { text-decoration: underline; }
+        .auth-link.muted { color: #AFA68F; font-size: 10px; }
+        .logout-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            height: 30px;
+            padding: 0 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(212,175,55,0.7);
+            background: #fffdf9;
+            color: #00002A;
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s ease;
+            white-space: nowrap;
+        }
+        .logout-pill:hover { background: #00002A; color: #D4AF37; }
         .auth-loader {
             display: inline-flex;
             width: 17px;
@@ -240,15 +294,17 @@
 
         /* تنسيق كروت الميزانية */
         .balance-card {
-            background: white;
+            background: var(--ivory-soft);
             border-radius: 50px;
             padding: 20px 30px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.02);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1.5px solid #e2e8f0;
+            border: 1.5px solid var(--beige-border);
             transition: all 0.3s ease;
+            gap: 10px;
+            min-width: 0;
         }
         .card-assets { border-left: 15px solid var(--royal-blue); }
         .card-liabilities { border-left: 15px solid var(--deep-sea); }
@@ -257,6 +313,7 @@
         /* القائمة الجانبية للتنقل */
         #side-menu { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); }
         #side-menu.open { transform: translateX(0); }
+        #side-menu:not(.open) { box-shadow: none; }
 
         .nav-icon-link {
             width: 60px;
@@ -286,26 +343,109 @@
         .stat-card { padding: 30px; margin-bottom: 15px; box-shadow: 0 20px 40px rgba(0,0,42,0.25); }
         .stat-card .value { font-size: 34px; font-weight: 900; color: var(--gold-primary); }
 
-        .quick-input-group input { border: 1px solid #e2e8f0; background-color: #ffffff; transition: all 0.2s; }
-        .quick-input-group input:focus { border-color: var(--gold-primary); background-color: #fffdf9; }
+        .quick-input-group input { border: 1px solid var(--beige-border); background-color: var(--ivory-input); transition: all 0.2s; min-width: 0; }
+        .quick-input-group input:focus { border-color: var(--gold-primary); background-color: #FFFCF5; }
         svg.filled { fill: currentColor; }
+
+        /* ===== أوف وايت دافئ بدل الأبيض (داخل الأداة فقط) ===== */
+        body .bg-white { background-color: var(--ivory) !important; }
+        #app-root .border-slate-100, #side-menu .border-slate-100 { border-color: var(--beige-border) !important; }
+        #app-root .bg-slate-50 { background-color: var(--ivory-input) !important; }
+        #app-root .bg-slate-50\/50 { background-color: rgba(245,239,227,0.6) !important; }
+        #app-root .bg-slate-50\/60 { background-color: rgba(245,239,227,0.75) !important; }
+        #app-root .bg-slate-100\/70 { background-color: rgba(233,223,203,0.55) !important; }
+        #app-root .border-slate-200, #app-root .divide-slate-100 > * { border-color: var(--beige-border) !important; }
+        #app-root input::placeholder { color: #A99F8A; }
+
+        /* ===== اختيار العملة ===== */
+        .currency-tile {
+            width: 60px; height: 52px; border-radius: 18px;
+            background: var(--ivory-input); border: 1.5px solid var(--gold-primary);
+            color: var(--royal-blue); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 1px;
+            cursor: pointer; font-family: inherit; transition: 0.2s ease;
+            margin-top: auto; margin-bottom: 14px;
+        }
+        .currency-tile:hover, .currency-tile.open { background: var(--royal-blue); color: var(--gold-primary); }
+        .currency-tile .cur-sym { font-size: 15px; font-weight: 900; line-height: 1.1; }
+        .currency-tile .cur-cap { font-size: 8px; font-weight: 700; opacity: 0.7; line-height: 1; }
+        #currency-pop {
+            position: fixed; right: 108px; bottom: 96px; z-index: 120;
+            width: 200px; max-width: calc(100vw - 120px);
+            background: var(--ivory); border: 1px solid var(--gold-primary);
+            border-radius: 22px; box-shadow: 0 18px 40px rgba(0,0,42,0.22);
+            padding: 8px; direction: rtl;
+        }
+        #currency-pop.hidden { display: none; }
+        #currency-pop .cur-title { font-size: 10px; font-weight: 800; color: #9A8B66; padding: 4px 10px 6px; }
+        .cur-option {
+            width: 100%; display: flex; align-items: center; gap: 10px;
+            padding: 8px 10px; border-radius: 14px; border: 0; background: transparent;
+            font-family: inherit; color: var(--royal-blue); cursor: pointer; text-align: right;
+        }
+        .cur-option:hover { background: var(--ivory-input); }
+        .cur-option .cur-badge {
+            flex: 0 0 auto; min-width: 38px; height: 28px; border-radius: 10px; padding: 0 6px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--royal-blue); color: var(--gold-primary); font-size: 12px; font-weight: 900;
+        }
+        .cur-option .cur-name { font-size: 12px; font-weight: 700; flex: 1; }
+        .cur-option.selected { background: rgba(212,175,55,0.16); }
+        .cur-option.selected::after { content: '✓'; color: var(--gold-primary); font-weight: 900; font-size: 13px; }
+        .money { unicode-bidi: isolate; white-space: nowrap; }
+
+        /* ===== الجوال: منع الخروج عن الشاشة ===== */
+        #app-root, #app-root main, #app-root section { min-width: 0; max-width: 100%; }
+        #app-root input, #app-root select, #app-root button { min-width: 0; }
+        #app-root canvas { max-width: 100%; }
+        @media (max-width: 480px) {
+            #app-root { padding-left: 16px !important; padding-right: 16px !important; }
+            .balance-card { padding: 14px 16px; border-radius: 32px; flex-wrap: wrap; }
+            .card-assets, .card-liabilities, .card-equity { border-left-width: 10px; }
+            .balance-card > * { min-width: 0; }
+            .balance-card .money { font-size: 20px; }
+            .balance-card > div { font-size: 13px; margin-inline-start: auto; }
+            .stat-card { padding: 22px; }
+            .stat-card .value { font-size: 28px; overflow-wrap: anywhere; }
+            .quick-input-group { gap: 6px !important; }
+            .quick-input-group input { padding-left: 10px !important; padding-right: 10px !important; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- شاشة الحساب: نفس مربع H، لكن بدل PIN أصبحت Auth حقيقية عبر Supabase -->
+    
     <div id="hedaya-lock-screen">
         <div class="auth-shell">
             <div class="auth-glow"></div>
             <div class="auth-card">
-                <div class="h-lock-frame"><span style="font-size: 62px; font-weight: 900; color: #00002A;">H</span></div>
+                <div class="h-lock-frame">
+                <svg class="compass-icon " width="70" height="70" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+                    <circle cx="32" cy="32" r="27" fill="none" stroke="#00002A" stroke-width="3"/>
+                    <circle cx="32" cy="32" r="22.5" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
+                    <g stroke="#00002A" stroke-width="2" stroke-linecap="round">
+                        <line x1="32" y1="5" x2="32" y2="9.5"/><line x1="32" y1="54.5" x2="32" y2="59"/>
+                        <line x1="5" y1="32" x2="9.5" y2="32"/><line x1="54.5" y1="32" x2="59" y2="32"/>
+                    </g>
+                    <g stroke="#D4AF37" stroke-width="1.4" stroke-linecap="round">
+                        <line x1="50.4" y1="13.6" x2="48.2" y2="15.8"/><line x1="13.6" y1="13.6" x2="15.8" y2="15.8"/>
+                        <line x1="50.4" y1="50.4" x2="48.2" y2="48.2"/><line x1="13.6" y1="50.4" x2="15.8" y2="48.2"/>
+                    </g>
+                    <polygon points="32,11 36.2,32 27.8,32" fill="#D4AF37" stroke="#B8901F" stroke-width="0.6" stroke-linejoin="round"/>
+                    <polygon points="32,53 36.2,32 27.8,32" fill="#00002A" stroke="#00002A" stroke-width="0.6" stroke-linejoin="round"/>
+                    <polygon points="53,32 32,35.4 32,28.6" fill="#00002A" opacity="0.85"/>
+                    <polygon points="11,32 32,35.4 32,28.6" fill="#D4AF37" opacity="0.9"/>
+                    <circle cx="32" cy="32" r="3.4" fill="#EADFC8" stroke="#00002A" stroke-width="1.6"/>
+                    <circle cx="32" cy="32" r="1.2" fill="#D4AF37"/>
+                </svg>
+                </div>
                 <div class="auth-brand-title">The Compass</div>
                 <div class="auth-brand-subtitle">الوعي المالي والوضوح الرقمي</div>
-                <div id="connection-status" class="connection-status">جاري تجهيز الاتصال الآمن...</div>
+                <div id="connection-status" class="connection-status" style="display:none">جاري تجهيز الاتصال الآمن...</div>
 
-                <!-- تسجيل الدخول وإنشاء الحساب -->
+                
                 <div id="auth-main-view">
-                    <p id="auth-kicker" class="auth-kicker">مساحتك المالية الخاصة، .</p>
+                    <p id="auth-kicker" class="auth-kicker">مساحتك المالية الخاصة، بحسابك الشخصي.</p>
 
                     <div class="auth-tabs">
                         <button id="tab-login" class="auth-tab active" type="button" onclick="switchAuthMode('login')">تسجيل الدخول</button>
@@ -341,9 +481,9 @@
                     <div id="auth-message" class="auth-message"></div>
                 </div>
 
-                <!-- استعادة كلمة المرور -->
+                
                 <div id="forgot-view" class="auth-hidden">
-                    <p class="auth-kicker" style="margin-top: 10px;">أدخلي بريدك الإلكتروني وسنرسل لكِ رابطًا آمنًا لإعادة تعيين كلمة المرور.</p>
+                    <p class="auth-kicker" style="margin-top: 10px;">يرجى كتابة البريد الإلكتروني، وسنرسل لك رابطًا آمنًا لإعادة تعيين كلمة المرور.</p>
                     <div class="auth-field">
                         <label class="auth-label" for="forgot-email">البريد الإلكتروني</label>
                         <input id="forgot-email" class="auth-input" type="email" autocomplete="email" placeholder="name@example.com">
@@ -355,9 +495,9 @@
                     </div>
                 </div>
 
-                <!-- تحديث كلمة المرور بعد فتح رابط الاستعادة -->
+                
                 <div id="reset-view" class="auth-hidden">
-                    <p class="auth-kicker" style="margin-top: 10px;">اختاري كلمة مرور جديدة لحسابك.</p>
+                    <p class="auth-kicker" style="margin-top: 10px;">كلمة مرور جديدة لحسابك.</p>
                     <div class="auth-field">
                         <label class="auth-label" for="reset-password">كلمة المرور الجديدة</label>
                         <div class="auth-input-wrap">
@@ -376,8 +516,23 @@
                     <div id="reset-message" class="auth-message"></div>
                 </div>
 
+                
+                <div id="activate-view" class="auth-hidden">
+                    <p class="auth-kicker" style="margin-top: 16px;">خطوة أخيرة: كود التفعيل الخاص بنسختك.</p>
+                    <div class="auth-field">
+                        <label class="auth-label" for="activate-code">كود التفعيل</label>
+                        <input id="activate-code" class="auth-input activate-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="COMP-XXXXX">
+                    </div>
+                    <button id="activate-submit" class="auth-primary" type="button" onclick="submitActivation()">تفعيل البوصلة</button>
+                    <div id="activate-message" class="auth-message"></div>
+                    <div class="activate-links">
+                        <a class="activate-wa" href="https://wa.me/962776577846?text=%D8%A8%D8%AF%D9%8A%20%D8%A3%D8%B4%D8%AA%D8%B1%D9%8A%20The%20Compass" target="_blank" rel="noopener">ما عندك كود؟ اطلبه من هون</a>
+                        <button class="auth-link muted" type="button" onclick="signOutFromActivation()">تسجيل خروج</button>
+                    </div>
+                </div>
+
                 <div class="auth-divider"></div>
-                <div class="auth-footnote">Designed by Hedaya.</div>
+                <div class="auth-signature-row"><span class="h-signature" aria-hidden="true">H</span></div>
             </div>
         </div>
     </div>
@@ -385,6 +540,7 @@
     <div id="overlay" class="fixed inset-0 bg-black/60 hidden z-[90]" onclick="toggleMenu()"></div>
 
     <div id="side-menu" class="fixed top-0 right-0 h-full w-[100px] bg-white shadow-2xl z-[100] flex flex-col items-center pt-24 border-l border-[#D4AF37]">
+        <span class="h-signature" aria-hidden="true" style="position:absolute;top:22px;left:0;right:0;text-align:center;font-size:40px;opacity:0.85;transform:rotate(-12deg)">H</span>
         <div class="nav-icon-link active" title="لوحة التحكم" onclick="showSection('dashboard', this)">
             <svg class="filled" width="28" height="28" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
         </div>
@@ -405,36 +561,71 @@
                 <path d="M2.2 2h19.6c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2H2.2c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2zm1.6 4v3.6h4.8V6H3.8zm0 5.6V15h4.8v-3.4H3.8zm0 5.4v3.4h4.8V17H3.8zM10.2 6v3.6h4.8V6h-4.8zm0 5.6V15h4.8v-3.4h-4.8zm0 5.4v3.4h4.8V17h-4.8zM16.6 6v3.6h4.8V6h-4.8zm3.2 5.6h1.6V15-1.6v-3.4zM16.6 17v3.4h1.6V17h-1.6zM2 4v16h20V4H2zM15 8h2.6L19 12l1.4-4h2.6l-3.2 8h-2.6l1.2 3 1.2-3H15v8h-2V8h2z"/>
             </svg>
         </div>
+
+        <button type="button" id="currency-tile" class="currency-tile" title="العملة" onclick="toggleCurrencyPicker(event)" aria-haspopup="listbox" aria-label="اختيار العملة">
+            <span class="cur-sym" id="currency-tile-sym">د.أ</span>
+            <span class="cur-cap">العملة</span>
+        </button>
+        <div class="nav-icon-link" title="تسجيل الخروج" onclick="confirmSignOut()" style="margin-bottom:28px">
+            <svg class="filled" width="28" height="28" viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+        </div>
     </div>
 
-    <div class="max-w-6xl mx-auto min-h-screen p-6 relative">
+    <div id="currency-pop" class="hidden" role="listbox" aria-label="العملة">
+        <div class="cur-title">اختر عملة العرض</div>
+        <div id="currency-options"></div>
+    </div>
+
+    <div id="app-root" class="max-w-6xl mx-auto min-h-screen p-6 relative">
         <header class="flex justify-between items-center mb-8">
             <button class="w-12 h-12 bg-[#00002A] rounded-xl flex flex-col justify-center items-center gap-1.5 border border-[#D4AF37]" onclick="toggleMenu()" aria-label="فتح القائمة">
                 <div class="w-6 h-0.5 bg-[#D4AF37]"></div><div class="w-6 h-0.5 bg-[#D4AF37]"></div><div class="w-6 h-0.5 bg-[#D4AF37]"></div>
             </button>
             <div class="text-right">
-                <h1 class="text-2xl font-black text-[#00002A]">The Compass</h1>
+                <h1 class="text-2xl font-black text-[#00002A]" style="position:relative;display:inline-block">The Compass<span class="h-signature" aria-hidden="true" style="position:absolute;left:-26px;top:-12px;font-size:28px;opacity:0.85">H</span></h1>
                 <p class="text-[10px] text-[#D4AF37] font-bold tracking-widest">الوعي المالي والوضوح الرقمي</p>
             </div>
-            <!-- نفس مربع H، الآن نقرة واحدة تسجّل الخروج -->
-            <button class="w-12 h-12 dark-card flex items-center justify-center text-xl font-black text-[#D4AF37] border border-[#D4AF37] shadow" onclick="confirmSignOut()" title="الحساب / تسجيل الخروج">H</button>
+            
+            <div class="flex items-center gap-2">
+                
+                <div class="w-12 h-12 dark-card flex items-center justify-center border border-[#D4AF37] shadow" aria-hidden="true">
+                <svg class="compass-icon " width="32" height="32" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+                    <circle cx="32" cy="32" r="27" fill="none" stroke="#D4AF37" stroke-width="2.6"/>
+                    <circle cx="32" cy="32" r="22.5" fill="none" stroke="#D4AF37" stroke-width="1.2"/>
+                    <g stroke="#F1E5AC" stroke-width="2" stroke-linecap="round">
+                        <line x1="32" y1="5" x2="32" y2="9.5"/><line x1="32" y1="54.5" x2="32" y2="59"/>
+                        <line x1="5" y1="32" x2="9.5" y2="32"/><line x1="54.5" y1="32" x2="59" y2="32"/>
+                    </g>
+                    <g stroke="#D4AF37" stroke-width="1.4" stroke-linecap="round">
+                        <line x1="50.4" y1="13.6" x2="48.2" y2="15.8"/><line x1="13.6" y1="13.6" x2="15.8" y2="15.8"/>
+                        <line x1="50.4" y1="50.4" x2="48.2" y2="48.2"/><line x1="13.6" y1="50.4" x2="15.8" y2="48.2"/>
+                    </g>
+                    <polygon points="32,11 36.2,32 27.8,32" fill="#D4AF37" stroke="#B8901F" stroke-width="0.6" stroke-linejoin="round"/>
+                    <polygon points="32,53 36.2,32 27.8,32" fill="#F1E5AC" stroke="#F1E5AC" stroke-width="0.6" stroke-linejoin="round"/>
+                    <polygon points="53,32 32,35.4 32,28.6" fill="#F1E5AC" opacity="0.8"/>
+                    <polygon points="11,32 32,35.4 32,28.6" fill="#D4AF37" opacity="0.9"/>
+                    <circle cx="32" cy="32" r="3.4" fill="#EADFC8" stroke="#00002A" stroke-width="1.6"/>
+                    <circle cx="32" cy="32" r="1.2" fill="#D4AF37"/>
+                </svg>
+                </div>
+            </div>
         </header>
 
         <div id="section-dashboard" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="dark-card stat-card rounded-[35px]">
                     <p class="text-slate-400 text-xs font-bold">إجمالي الإيرادات </p>
-                    <div class="value mt-1">$<span id="display-inflow">0</span></div>
+                    <div class="value mt-1"><span id="display-inflow" class="money">0</span></div>
                 </div>
                 <div class="dark-card stat-card rounded-[35px]" style="background-color: #000035;">
                     <p class="text-slate-400 text-xs font-bold">إجمالي النفقات </p>
-                    <div class="value mt-1 text-red-400">$<span id="display-outflow">0</span></div>
+                    <div class="value mt-1 text-red-400"><span id="display-outflow" class="money">0</span></div>
                 </div>
             </div>
             <div class="bg-white p-6 rounded-[35px] border border-slate-100 shadow-sm mt-4">
                 <h3 class="font-black border-r-4 border-[#D4AF37] pr-3 mb-4 text-base">سجل العمليات اليومية</h3>
                 <div id="records-list" class="space-y-3 text-sm max-h-60 overflow-y-auto"></div>
-                <div class="mt-6 h-64"><canvas id="financeChart"></canvas></div>
+                <div class="mt-6 h-72"><canvas id="financeChart"></canvas></div>
             </div>
         </div>
 
@@ -443,8 +634,8 @@
 
             <div class="space-y-3 bg-white p-4 rounded-[35px] border border-slate-100 shadow-sm">
                 <div class="balance-card card-assets">
-                    <span id="asset-total" class="font-black text-2xl text-[#00002A]">$0</span>
-                    <div class="font-bold text-slate-700 text-base">الأصول (Assets)</div>
+                    <span id="asset-total" class="money font-black text-2xl text-[#00002A]">0</span>
+                    <div class="font-bold text-slate-700 text-base" style="min-width:0">الأصول (Assets)</div>
                 </div>
                 <div class="flex items-center gap-1.5 quick-input-group">
                     <button onclick="quickAddFlexible('asset', 'quick-asset-desc', 'quick-asset-amount', 'plus')" class="w-11 h-14 bg-[#00002A] text-[#D4AF37] hover:bg-[#1A3F75] rounded-xl flex items-center justify-center font-bold text-xl shadow shrink-0" title="زيادة أصول">+</button>
@@ -452,9 +643,9 @@
                     <input type="number" id="quick-asset-amount" placeholder="القيمة " class="w-20 p-4 rounded-xl font-bold text-center outline-none text-xs text-slate-800">
                     <input type="text" id="quick-asset-desc" placeholder="مثال:كاش،ذمم مدينة، بضاعة" class="flex-1 p-4 rounded-xl font-bold outline-none text-xs text-slate-700">
                 </div>
-                <div class="overflow-hidden rounded-xl border border-slate-100 text-[11px] mt-2">
+                <div class="overflow-x-auto rounded-xl border border-slate-100 text-[11px] mt-2">
                     <table class="w-full text-right bg-slate-50/50">
-                        <thead class="bg-slate-100/70 text-slate-600 font-bold"><tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24">القيمة</th><th class="p-2">البند</th></tr></thead>
+                        <thead class="bg-slate-100/70 text-slate-600 font-bold"><tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24 whitespace-nowrap">القيمة</th><th class="p-2">البند</th></tr></thead>
                         <tbody id="table-assets-body"></tbody>
                     </table>
                 </div>
@@ -462,8 +653,8 @@
 
             <div class="space-y-3 bg-white p-4 rounded-[35px] border border-slate-100 shadow-sm">
                 <div class="balance-card card-liabilities">
-                    <span id="liab-total" class="font-black text-2xl text-[#1A3F75]">$0</span>
-                    <div class="font-bold text-slate-700 text-base">الالتزامات (Liabilities)</div>
+                    <span id="liab-total" class="money font-black text-2xl text-[#1A3F75]">0</span>
+                    <div class="font-bold text-slate-700 text-base" style="min-width:0">الالتزامات (Liabilities)</div>
                 </div>
                 <div class="flex items-center gap-1.5 quick-input-group">
                     <button onclick="quickAddFlexible('liab', 'quick-liab-desc', 'quick-liab-amount', 'plus')" class="w-11 h-14 bg-[#1A3F75] text-white hover:bg-[#2B5C9E] rounded-xl flex items-center justify-center font-bold text-xl shadow shrink-0" title="زيادة التزامات">+</button>
@@ -471,9 +662,9 @@
                     <input type="number" id="quick-liab-amount" placeholder="القيمة" class="w-20 p-4 rounded-xl font-bold text-center outline-none text-xs text-slate-800">
                     <input type="text" id="quick-liab-desc" placeholder=" مثال:  قرض، ذمم دائنة" class="flex-1 p-4 rounded-xl font-bold outline-none text-xs text-slate-700">
                 </div>
-                <div class="overflow-hidden rounded-xl border border-slate-100 text-[11px] mt-2">
+                <div class="overflow-x-auto rounded-xl border border-slate-100 text-[11px] mt-2">
                     <table class="w-full text-right bg-slate-50/50">
-                        <thead class="bg-slate-100/70 text-slate-600 font-bold"><tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24">القيمة</th><th class="p-2">البند</th></tr></thead>
+                        <thead class="bg-slate-100/70 text-slate-600 font-bold"><tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24 whitespace-nowrap">القيمة</th><th class="p-2">البند</th></tr></thead>
                         <tbody id="table-liab-body"></tbody>
                     </table>
                 </div>
@@ -481,8 +672,8 @@
 
             <div class="space-y-3 bg-white p-4 rounded-[35px] border border-slate-100 shadow-sm">
                 <div class="balance-card card-equity">
-                    <span id="equity-total" class="font-black text-2xl text-[#AA8831]">$0</span>
-                    <div class="font-bold text-slate-700 text-base">حقوق الملكية (Equity)</div>
+                    <span id="equity-total" class="money font-black text-2xl text-[#AA8831]">0</span>
+                    <div class="font-bold text-slate-700 text-base" style="min-width:0">حقوق الملكية (Equity)</div>
                 </div>
                 <div class="flex items-center gap-1.5 quick-input-group">
                     <button onclick="quickAddFlexible('equity', 'quick-equity-desc', 'quick-equity-amount', 'plus')" class="w-11 h-14 bg-[#D4AF37] text-[#00002A] hover:bg-[#AA8831] rounded-xl flex items-center justify-center font-bold text-xl shadow shrink-0" title="زيادة ملكية">+</button>
@@ -490,9 +681,9 @@
                     <input type="number" id="quick-equity-amount" placeholder="القيمة" class="w-20 p-4 rounded-xl font-bold text-center outline-none text-xs text-slate-800">
                     <input type="text" id="quick-equity-desc" placeholder="مثال: رأس المال،ارباح،مصاريف " class="flex-1 p-4 rounded-xl font-bold outline-none text-xs text-slate-700">
                 </div>
-                <div class="overflow-hidden rounded-xl border border-slate-100 text-[11px] mt-2">
+                <div class="overflow-x-auto rounded-xl border border-slate-100 text-[11px] mt-2">
                     <table class="w-full text-right bg-slate-50/50">
-                        <thead class="bg-slate-100/70 text-slate-600 font-bold"><tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24">القيمة</th><th class="p-2">البند</th></tr></thead>
+                        <thead class="bg-slate-100/70 text-slate-600 font-bold"><tr><th class="p-2 text-center w-12">حذف</th><th class="p-2 text-center w-24 whitespace-nowrap">القيمة</th><th class="p-2">البند</th></tr></thead>
                         <tbody id="table-equity-body"></tbody>
                     </table>
                 </div>
@@ -506,14 +697,14 @@
                 <h2 class="text-lg font-black mb-4 text-[#D4AF37]"> تحليل ربحية المنتج </h2>
                 <div class="space-y-4 text-sm">
                     <input type="text" id="calc-client" placeholder="اسم المنتج / العميل" class="w-full p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:border-[#D4AF37]">
-                    <input type="number" id="calc-price" oninput="calcProfit()" placeholder="سعر البيع  ($)" class="w-full p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:border-[#D4AF37]">
+                    <input type="number" id="calc-price" oninput="calcProfit()" placeholder="سعر البيع" data-cur-placeholder="سعر البيع ({c})" class="w-full p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:border-[#D4AF37]">
                     <input type="number" id="calc-cost" oninput="calcProfit()" placeholder="تكلفة المنتج (COGS)" class="w-full p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:border-[#D4AF37]">
                     <input type="number" id="calc-opex" oninput="calcProfit()" placeholder="التغليف، التوصيل، والتسويق (OPEX)" class="w-full p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:border-[#D4AF37]">
 
-                    <div class="p-5 bg-amber-50 rounded-2xl flex justify-between items-center border border-amber-100">
+                    <div class="p-5 bg-amber-50 rounded-2xl flex justify-between items-center gap-3 border border-amber-100">
                         <div>
                             <p class="text-xs text-amber-800 font-bold mb-1"> هامش الربح</p>
-                            <span class="text-xl font-black text-slate-800">$<span id="calc-net">0</span></span>
+                            <span class="text-xl font-black text-slate-800"><span id="calc-net" class="money">0</span></span>
                         </div>
                         <div class="text-left">
                             <p class="text-xs text-amber-800 font-bold mb-1"> صافي هامش الربح </p>
@@ -534,9 +725,9 @@
                         <option value="purchase">نفقات  (-)</option>
                     </select>
                     <input type="text" id="party-name" placeholder="البيان (مثال: بيع لعميل ، شراء من مورد)" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-[#D4AF37]">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="item-qty" placeholder="الكمية" class="p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-[#D4AF37]">
-                        <input type="number" id="item-price" placeholder="سعر الوحدة ($)" class="p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-[#D4AF37]">
+                    <div class="grid grid-cols-2 gap-3" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                        <input type="number" id="item-qty" placeholder="الكمية" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-[#D4AF37]">
+                        <input type="number" id="item-price" placeholder="سعر الوحدة" data-cur-placeholder="سعر الوحدة ({c})" class="w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-[#D4AF37]">
                     </div>
                     <button class="w-full p-4 dark-card text-[#D4AF37] font-black rounded-2xl border border-[#D4AF37]" onclick="addTrade()">تسجيل الحركة </button>
                 </div>
@@ -544,801 +735,12 @@
         </div>
     </div>
 
-    <footer class="text-center py-8 opacity-50">
-        <p class="text-[10px] font-bold text-[#103058] tracking-widest">©️ 2026 بوصلة هدايه | HEDAYA'S COMPASS</p>
-        <p class="text-[9px] text-[#071c38] mt-1">جميع الحقوق محفوظة لـ هدايه عودات</p>
+    <footer class="text-center py-8 relative max-w-6xl mx-auto">
+        <p class="text-[10px] font-bold text-[#103058] tracking-widest opacity-50">©️ 2026 The Compass | البوصلة</p>
+        <p class="text-[9px] text-[#071c38] mt-1 opacity-50">جميع الحقوق محفوظة</p>
+        <span class="h-signature" aria-hidden="true" style="position:absolute; left:26px; bottom:18px; font-size:30px; opacity:0.7;">H</span>
     </footer>
 
-    <script>
-        /* ==============================
-           SUPABASE CONNECTION
-           ============================== */
-        const SUPABASE_URL = 'https://pujpztniyyhucfmtqwnp.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_V-_n9DECT8ZwkfU7h-EuKQ_rZxUh9bQ';
-        let compassClient = null;
-        let supabaseReady = false;
-
-        function setConnectionStatus(text, type = '') {
-            const el = document.getElementById('connection-status');
-            if (!el) return;
-            el.textContent = text;
-            el.className = `connection-status ${type}`;
-        }
-
-        function loadScript(src) {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = src;
-                script.async = true;
-                script.onload = resolve;
-                script.onerror = () => reject(new Error('تعذر تحميل مكتبة Supabase.'));
-                document.head.appendChild(script);
-            });
-        }
-
-        async function loadSupabaseLibrary() {
-            if (window.supabase?.createClient) return;
-            try {
-                await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
-            } catch (firstError) {
-                await loadScript('https://unpkg.com/@supabase/supabase-js@2');
-            }
-            if (!window.supabase?.createClient) throw new Error('تعذر تحميل Supabase.');
-        }
-
-        function getRedirectUrl() {
-            return /^https?:$/.test(window.location.protocol)
-                ? window.location.href.split('#')[0]
-                : null;
-        }
-
-        const LOCAL_LEGACY_KEY = 'hedaya_v7_flexible';
-        let records = [];
-        let currentUser = null;
-        let myChart = null;
-        let isHandlingAuth = false;
-
-
-        /* ==============================
-           AUTH UI
-           ============================== */
-        function setAuthMessage(id, text, type = '') {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.textContent = text || '';
-            el.className = `auth-message ${type}`;
-        }
-
-        function clearAuthMessages() {
-            ['auth-message', 'forgot-message', 'reset-message'].forEach(id => setAuthMessage(id, ''));
-        }
-
-        function switchAuthMode(mode) {
-            clearAuthMessages();
-            document.getElementById('auth-main-view').classList.remove('auth-hidden');
-            document.getElementById('forgot-view').classList.add('auth-hidden');
-            document.getElementById('reset-view').classList.add('auth-hidden');
-
-            const isSignup = mode === 'signup';
-            document.getElementById('tab-login').classList.toggle('active', !isSignup);
-            document.getElementById('tab-signup').classList.toggle('active', isSignup);
-            document.getElementById('signup-password-confirm').classList.toggle('auth-hidden', !isSignup);
-            document.getElementById('forgot-wrap').classList.toggle('auth-hidden', isSignup);
-            document.getElementById('auth-submit').textContent = isSignup ? 'إنشاء الحساب' : 'دخول';
-            document.getElementById('auth-password').autocomplete = isSignup ? 'new-password' : 'current-password';
-            document.getElementById('auth-kicker').textContent = isSignup
-                ? 'أنشئي حسابك الخاص وابدئي مساحتك المالية.'
-                : 'مساحتك المالية الخاصة، بحسابك أنت.';
-            document.getElementById('auth-submit').dataset.mode = mode;
-        }
-
-        function showForgotPassword() {
-            clearAuthMessages();
-            document.getElementById('auth-main-view').classList.add('auth-hidden');
-            document.getElementById('forgot-view').classList.remove('auth-hidden');
-            document.getElementById('reset-view').classList.add('auth-hidden');
-            const existingEmail = document.getElementById('auth-email').value.trim();
-            document.getElementById('forgot-email').value = existingEmail;
-            setTimeout(() => document.getElementById('forgot-email').focus(), 50);
-        }
-
-        function backToAuth() {
-            clearAuthMessages();
-            document.getElementById('auth-main-view').classList.remove('auth-hidden');
-            document.getElementById('forgot-view').classList.add('auth-hidden');
-            document.getElementById('reset-view').classList.add('auth-hidden');
-            switchAuthMode('login');
-        }
-
-        function showResetPasswordView() {
-            clearAuthMessages();
-            document.getElementById('auth-main-view').classList.add('auth-hidden');
-            document.getElementById('forgot-view').classList.add('auth-hidden');
-            document.getElementById('reset-view').classList.remove('auth-hidden');
-        }
-
-        function togglePassword(inputId, button) {
-            const input = document.getElementById(inputId);
-            if (!input) return;
-            input.type = input.type === 'password' ? 'text' : 'password';
-            button.textContent = input.type === 'password' ? '◉' : '◌';
-        }
-
-        function friendlyAuthError(error) {
-            const msg = (error?.message || '').toLowerCase();
-            if (msg.includes('invalid login credentials')) return 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
-            if (msg.includes('email not confirmed')) return 'يرجى تأكيد بريدك الإلكتروني أولًا من الرسالة التي أرسلناها لكِ.';
-            if (msg.includes('user already registered')) return 'هذا البريد مسجّل بالفعل. جرّبي تسجيل الدخول بدلًا من إنشاء حساب جديد.';
-            if (msg.includes('password should be at least')) return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل. نفضّل استخدام كلمة أقوى.';
-            if (msg.includes('rate limit')) return 'تم الوصول إلى حد الإرسال مؤقتًا. جرّبي مرة أخرى لاحقًا.';
-            if (msg.includes('same password')) return 'اختاري كلمة مرور مختلفة عن السابقة.';
-            if (msg.includes('network')) return 'تعذر الاتصال بالإنترنت. تحققي من الاتصال ثم جرّبي مرة أخرى.';
-            return error?.message || 'حدث خطأ غير متوقع. جرّبي مرة أخرى.';
-        }
-
-        function setButtonLoading(button, loading, text) {
-            if (!button) return;
-            button.disabled = loading;
-            if (loading) {
-                button.dataset.originalText = button.textContent;
-                button.innerHTML = `<span class="auth-loader"></span>${text || 'جارٍ التنفيذ...'}`;
-            } else {
-                button.textContent = button.dataset.originalText || text || 'متابعة';
-            }
-        }
-
-        async function submitAuth() {
-            if (!supabaseReady || !compassClient) {
-                setAuthMessage('auth-message', 'نظام الدخول لم يجهز بعد. تحققي من اتصال الإنترنت ثم حاولي مرة أخرى.', 'error');
-                return;
-            }
-            const mode = document.getElementById('auth-submit').dataset.mode || 'login';
-            const email = document.getElementById('auth-email').value.trim().toLowerCase();
-            const password = document.getElementById('auth-password').value;
-            const confirm = document.getElementById('auth-password-confirm').value;
-            const button = document.getElementById('auth-submit');
-            clearAuthMessages();
-
-            if (!email || !email.includes('@')) {
-                setAuthMessage('auth-message', 'أدخلي بريدًا إلكترونيًا صحيحًا.', 'error');
-                return;
-            }
-            if (password.length < 6) {
-                setAuthMessage('auth-message', 'كلمة المرور يجب أن تكون 6 أحرف على الأقل.', 'error');
-                return;
-            }
-            if (mode === 'signup' && password !== confirm) {
-                setAuthMessage('auth-message', 'كلمتا المرور غير متطابقتين.', 'error');
-                return;
-            }
-
-            setButtonLoading(button, true, mode === 'signup' ? 'جارٍ إنشاء الحساب...' : 'جارٍ الدخول...');
-
-            try {
-                if (mode === 'signup') {
-                    const redirectUrl = getRedirectUrl();
-                    const signUpOptions = redirectUrl ? { emailRedirectTo: redirectUrl } : undefined;
-                    const { data, error } = await compassClient.auth.signUp({
-                        email,
-                        password,
-                        ...(signUpOptions ? { options: signUpOptions } : {})
-                    });
-                    if (error) throw error;
-
-                    if (data.session) {
-                        await handleSignedIn(data.session);
-                    } else {
-                        setAuthMessage('auth-message', 'تم إنشاء الحساب. افتحي بريدك الإلكتروني واضغطي رابط التأكيد ثم عودي للأداة.', 'success');
-                    }
-                } else {
-                    const { data, error } = await compassClient.auth.signInWithPassword({ email, password });
-                    if (error) throw error;
-                    if (data.session) await handleSignedIn(data.session);
-                }
-            } catch (error) {
-                setAuthMessage('auth-message', friendlyAuthError(error), 'error');
-            } finally {
-                setButtonLoading(button, false);
-            }
-        }
-
-        async function sendResetEmail() {
-            if (!supabaseReady || !compassClient) {
-                setAuthMessage('forgot-message', 'نظام الدخول لم يجهز بعد. تحققي من اتصال الإنترنت ثم حاولي مرة أخرى.', 'error');
-                return;
-            }
-            const email = document.getElementById('forgot-email').value.trim().toLowerCase();
-            const button = document.getElementById('forgot-submit');
-            setAuthMessage('forgot-message', '');
-            if (!email || !email.includes('@')) {
-                setAuthMessage('forgot-message', 'أدخلي بريدًا إلكترونيًا صحيحًا.', 'error');
-                return;
-            }
-
-            setButtonLoading(button, true, 'جارٍ الإرسال...');
-            try {
-                const redirectUrl = getRedirectUrl();
-                const { error } = await compassClient.auth.resetPasswordForEmail(
-                    email,
-                    redirectUrl ? { redirectTo: redirectUrl } : undefined
-                );
-                if (error) throw error;
-                setAuthMessage('forgot-message', 'تم إرسال رابط الاستعادة إلى بريدك الإلكتروني. افتحيه لإكمال التغيير.', 'success');
-            } catch (error) {
-                setAuthMessage('forgot-message', friendlyAuthError(error), 'error');
-            } finally {
-                setButtonLoading(button, false);
-            }
-        }
-
-        async function updatePassword() {
-            if (!supabaseReady || !compassClient) {
-                setAuthMessage('reset-message', 'نظام الدخول لم يجهز بعد. افتحي رابط الاستعادة من بريدك عبر نسخة الويب.', 'error');
-                return;
-            }
-            const password = document.getElementById('reset-password').value;
-            const confirm = document.getElementById('reset-password-confirm').value;
-            const button = document.getElementById('reset-submit');
-            setAuthMessage('reset-message', '');
-
-            if (password.length < 6) {
-                setAuthMessage('reset-message', 'كلمة المرور يجب أن تكون 6 أحرف على الأقل.', 'error');
-                return;
-            }
-            if (password !== confirm) {
-                setAuthMessage('reset-message', 'كلمتا المرور غير متطابقتين.', 'error');
-                return;
-            }
-
-            setButtonLoading(button, true, 'جارٍ الحفظ...');
-            try {
-                const { error } = await compassClient.auth.updateUser({ password });
-                if (error) throw error;
-                setAuthMessage('reset-message', 'تم تحديث كلمة المرور بنجاح. جارٍ فتح حسابك...', 'success');
-                setTimeout(async () => {
-                    const { data } = await compassClient.auth.getSession();
-                    if (data.session) await handleSignedIn(data.session);
-                }, 700);
-            } catch (error) {
-                setAuthMessage('reset-message', friendlyAuthError(error), 'error');
-            } finally {
-                setButtonLoading(button, false);
-            }
-        }
-
-        function showApp() {
-            const screen = document.getElementById('hedaya-lock-screen');
-            screen.style.opacity = '0';
-            setTimeout(() => {
-                screen.style.display = 'none';
-            }, 450);
-        }
-
-        function showLock() {
-            const screen = document.getElementById('hedaya-lock-screen');
-            screen.style.display = 'flex';
-            requestAnimationFrame(() => { screen.style.opacity = '1'; });
-            switchAuthMode('login');
-        }
-
-        async function handleSignedIn(session) {
-            if (!session?.user || isHandlingAuth) return;
-            isHandlingAuth = true;
-            try {
-                currentUser = session.user;
-                await migrateLegacyDataOnce();
-                await loadRecords();
-                showApp();
-                updateUI();
-            } catch (error) {
-                console.error('Compass load error:', error);
-                alert('تم تسجيل الدخول، لكن تعذر تحميل بيانات الأداة الآن. تحققي من إعدادات قاعدة البيانات ثم أعيدي المحاولة.');
-            } finally {
-                isHandlingAuth = false;
-            }
-        }
-
-        async function confirmSignOut() {
-            if (!currentUser) return;
-            const ok = confirm('هل تريدين تسجيل الخروج من The Compass؟');
-            if (!ok) return;
-            const { error } = await compassClient.auth.signOut();
-            if (error) {
-                alert('تعذر تسجيل الخروج. حاولي مرة أخرى.');
-                return;
-            }
-            records = [];
-            currentUser = null;
-            if (myChart) {
-                myChart.destroy();
-                myChart = null;
-            }
-            showLock();
-        }
-
-        /* ==============================
-           DATA / SUPABASE
-           ============================== */
-        async function loadRecords() {
-            if (!currentUser) return;
-            const { data, error } = await compassClient
-                .from('financial_records')
-                .select('id, user_id, name, amount, type, category, created_at')
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-
-            records = (data || []).map(r => ({
-                id: r.id,
-                name: r.name,
-                amount: Number(r.amount),
-                type: r.type,
-                category: r.category,
-                date: r.created_at
-            }));
-        }
-
-        async function insertRecord(record) {
-            if (!currentUser) {
-                showLock();
-                return null;
-            }
-            const payload = {
-                user_id: currentUser.id,
-                name: record.name,
-                amount: Number(record.amount),
-                type: record.type,
-                category: record.category || null,
-                created_at: record.date ? new Date(record.date).toISOString() : new Date().toISOString()
-            };
-            const { data, error } = await compassClient
-                .from('financial_records')
-                .insert(payload)
-                .select('id, user_id, name, amount, type, category, created_at')
-                .single();
-
-            if (error) throw error;
-
-            return {
-                id: data.id,
-                name: data.name,
-                amount: Number(data.amount),
-                type: data.type,
-                category: data.category,
-                date: data.created_at
-            };
-        }
-
-        async function deleteRecord(i) {
-            if (!currentUser || !records[i]) return;
-            if (!confirm('هل أنت متأكد من حذف هذا البند؟')) return;
-
-            const record = records[i];
-            const { error } = await compassClient
-                .from('financial_records')
-                .delete()
-                .eq('id', record.id)
-                .eq('user_id', currentUser.id);
-
-            if (error) {
-                console.error(error);
-                alert('تعذر حذف السجل.');
-                return;
-            }
-
-            records.splice(i, 1);
-            updateUI();
-        }
-
-        /* نقل بيانات النسخة القديمة مرة واحدة فقط للحساب الذي يسجل من نفس الجهاز */
-        async function migrateLegacyDataOnce() {
-            if (!currentUser) return;
-
-            const migrationKey = `hedaya_compass_migrated_${currentUser.id}`;
-            if (localStorage.getItem(migrationKey) === 'done') return;
-
-            const legacyRaw = localStorage.getItem(LOCAL_LEGACY_KEY);
-            if (!legacyRaw) {
-                localStorage.setItem(migrationKey, 'done');
-                return;
-            }
-
-            let legacyRecords;
-            try {
-                legacyRecords = JSON.parse(legacyRaw);
-            } catch {
-                return;
-            }
-            if (!Array.isArray(legacyRecords) || legacyRecords.length === 0) {
-                localStorage.setItem(migrationKey, 'done');
-                return;
-            }
-
-            const alreadyHasData = await compassClient
-                .from('financial_records')
-                .select('id', { count: 'exact', head: true });
-
-            if (alreadyHasData.error) throw alreadyHasData.error;
-            if ((alreadyHasData.count || 0) > 0) {
-                localStorage.setItem(migrationKey, 'done');
-                localStorage.removeItem(LOCAL_LEGACY_KEY);
-                return;
-            }
-
-            const payload = legacyRecords.map(r => ({
-                user_id: currentUser.id,
-                name: String(r.name || 'سجل مالي'),
-                amount: Number(r.amount || 0),
-                type: String(r.type || 'direct-balance'),
-                category: r.category ? String(r.category) : null,
-                created_at: r.date ? new Date(r.date).toISOString() : new Date().toISOString()
-            }));
-
-            const { error } = await compassClient.from('financial_records').insert(payload);
-            if (error) throw error;
-
-            localStorage.setItem(migrationKey, 'done');
-            localStorage.removeItem(LOCAL_LEGACY_KEY);
-        }
-
-        /* ==============================
-           ORIGINAL COMPASS FUNCTIONS
-           ============================== */
-        function toggleMenu() {
-            document.getElementById('side-menu').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('hidden');
-        }
-
-        function showSection(id, element) {
-            document.querySelectorAll('[id^="section-"]').forEach(s => s.classList.add('hidden'));
-            document.getElementById('section-' + id).classList.remove('hidden');
-            document.querySelectorAll('.nav-icon-link').forEach(link => link.classList.remove('active'));
-            if (element) element.classList.add('active');
-            if (document.getElementById('side-menu').classList.contains('open')) toggleMenu();
-            updateUI();
-        }
-
-        async function quickAddFlexible(categoryType, descId, amountId, actionType) {
-            const amtInput = document.getElementById(amountId);
-            const descInput = document.getElementById(descId);
-            let amt = parseFloat(amtInput.value);
-            const desc = descInput.value || `بند ${categoryType}`;
-
-            if (isNaN(amt) || amt <= 0) {
-                alert('يرجى كتابة سعر ومبلغ صحيح أولاً.');
-                return;
-            }
-            if (actionType === 'minus') amt = -amt;
-
-            try {
-                const saved = await insertRecord({
-                    name: desc,
-                    amount: amt,
-                    type: 'direct-balance',
-                    category: categoryType,
-                    date: Date.now()
-                });
-                if (!saved) return;
-                records.unshift(saved);
-                amtInput.value = '';
-                descInput.value = '';
-                updateUI();
-            } catch (error) {
-                console.error(error);
-                alert('تعذر حفظ الحركة. تحققي من الاتصال وقاعدة البيانات.');
-            }
-        }
-
-        async function addTrade() {
-            const price = parseFloat(document.getElementById('item-price').value) || 0;
-            const qty = parseFloat(document.getElementById('item-qty').value) || 1;
-            const type = document.getElementById('sale-type').value;
-            const party = document.getElementById('party-name').value || 'عملية تجارية';
-
-            if (price <= 0) { alert('حدد السعر من فضلك.'); return; }
-
-            try {
-                const saved = await insertRecord({
-                    name: party,
-                    amount: qty * price,
-                    type,
-                    date: Date.now()
-                });
-                if (!saved) return;
-                records.unshift(saved);
-
-                document.getElementById('item-price').value = '';
-                document.getElementById('item-qty').value = '';
-                document.getElementById('party-name').value = '';
-
-                showSection('dashboard', document.querySelector('.nav-icon-link:first-child'));
-                updateUI();
-            } catch (error) {
-                console.error(error);
-                alert('تعذر حفظ الحركة التجارية.');
-            }
-        }
-
-        function calcProfit() {
-            const price = parseFloat(document.getElementById('calc-price').value) || 0;
-            const cost = parseFloat(document.getElementById('calc-cost').value) || 0;
-            const opex = parseFloat(document.getElementById('calc-opex').value) || 0;
-            const netProfit = price - (cost + opex);
-            const margin = price > 0 ? (netProfit / price) * 100 : 0;
-
-            document.getElementById('calc-net').innerText = netProfit.toLocaleString();
-            document.getElementById('calc-margin').innerText = margin.toFixed(0) + '%';
-        }
-
-        async function saveProfitEntry() {
-            const client = document.getElementById('calc-client').value || 'تحليل أرباح صفقة';
-            const price = parseFloat(document.getElementById('calc-price').value) || 0;
-            const cost = parseFloat(document.getElementById('calc-cost').value) || 0;
-            const opex = parseFloat(document.getElementById('calc-opex').value) || 0;
-
-            if (price <= 0) { alert('يرجى تحديد سعر البيع أولاً'); return; }
-
-            try {
-                const revenue = await insertRecord({
-                    name: `إيراد صفقة: ${client}`,
-                    amount: price,
-                    type: 'sale',
-                    date: Date.now()
-                });
-                if (revenue) records.unshift(revenue);
-
-                const totalExp = cost + opex;
-                if (totalExp > 0) {
-                    const expense = await insertRecord({
-                        name: `نفقات وتكاليف صفقة: ${client}`,
-                        amount: totalExp,
-                        type: 'purchase',
-                        date: Date.now() + 1
-                    });
-                    if (expense) records.unshift(expense);
-                }
-
-                document.getElementById('calc-client').value = '';
-                document.getElementById('calc-price').value = '';
-                document.getElementById('calc-cost').value = '';
-                document.getElementById('calc-opex').value = '';
-                calcProfit();
-
-                showSection('dashboard', document.querySelector('.nav-icon-link:first-child'));
-                updateUI();
-            } catch (error) {
-                console.error(error);
-                alert('تعذر حفظ تحليل الربحية.');
-            }
-        }
-
-        function updateUI() {
-            let inflow = 0, outflow = 0, assets = 0, liabs = 0, equity = 0;
-
-            const log = document.getElementById('records-list');
-            const tAssets = document.getElementById('table-assets-body');
-            const tLiab = document.getElementById('table-liab-body');
-            const tEquity = document.getElementById('table-equity-body');
-            if (!log) return;
-
-            log.innerHTML = '';
-            if (tAssets) tAssets.innerHTML = '';
-            if (tLiab) tLiab.innerHTML = '';
-            if (tEquity) tEquity.innerHTML = '';
-
-            records.forEach((r, i) => {
-                const amt = Number(r.amount) || 0;
-                const isPositive = amt >= 0;
-                const formattedAmt = (isPositive ? '+$' : '-$') + Math.abs(amt).toLocaleString();
-                const textColorClass = isPositive ? 'text-emerald-600' : 'text-red-500';
-
-                if (r.type === 'direct-balance') {
-                    const rowHTML = `
-                        <tr>
-                            <td class="p-2 text-center text-red-400 font-bold cursor-pointer hover:text-red-600 transition-colors" onclick="deleteRecord(${i})">✕</td>
-                            <td class="p-2 text-center font-black ${textColorClass}">${formattedAmt}</td>
-                            <td class="p-2 font-bold text-slate-700">${escapeHtml(r.name)}</td>
-                        </tr>`;
-
-                    if (r.category === 'asset') {
-                        assets += amt;
-                        if (tAssets) tAssets.innerHTML += rowHTML;
-                    } else if (r.category === 'liab') {
-                        liabs += amt;
-                        if (tLiab) tLiab.innerHTML += rowHTML;
-                    } else if (r.category === 'equity') {
-                        equity += amt;
-                        if (tEquity) tEquity.innerHTML += rowHTML;
-                    }
-                } else {
-                    if (r.type === 'sale') { inflow += amt; assets += amt; equity += amt; }
-                    else if (r.type === 'purchase') { outflow += amt; assets -= amt; equity -= amt; }
-                }
-
-                const d = new Date(r.date || Date.now());
-                log.innerHTML += `
-                    <div class="flex justify-between items-center p-3.5 bg-slate-50/60 rounded-2xl text-xs mb-2 border-r-4 border-[#D4AF37]">
-                        <button onclick="deleteRecord(${i})" class="text-red-400 font-bold text-sm px-1 hover:text-red-600">✕</button>
-                        <span class="font-black ${textColorClass}">${formattedAmt}</span>
-                        <div class="text-right flex-1 pr-3">
-                            <p class="font-bold text-slate-700">${escapeHtml(r.name)}</p>
-                            <p class="text-[9px] text-slate-400">${d.toLocaleDateString('ar-EG')}</p>
-                        </div>
-                    </div>`;
-            });
-
-            document.getElementById('display-inflow').innerText = inflow.toLocaleString();
-            document.getElementById('display-outflow').innerText = outflow.toLocaleString();
-            document.getElementById('asset-total').innerText = (assets >= 0 ? '$' : '-$') + Math.abs(assets).toLocaleString();
-            document.getElementById('liab-total').innerText = (liabs >= 0 ? '$' : '-$') + Math.abs(liabs).toLocaleString();
-            document.getElementById('equity-total').innerText = (equity >= 0 ? '$' : '-$') + Math.abs(equity).toLocaleString();
-
-            const difference = assets - (liabs + equity);
-            const checkEl = document.getElementById('equation-check');
-            if (checkEl) {
-                if (Math.abs(difference) < 0.1) {
-                    checkEl.innerText = 'الميزانية متطابقة ومتوازنة تماماً بموجب مدخلاتك الحالية ✓';
-                    checkEl.style.color = '#10b981';
-                    checkEl.style.backgroundColor = '#ecfdf5';
-                } else {
-                    checkEl.innerText = 'الفارق أو الفجوة الحالية بين البنود المدخلة: ' + (difference >= 0 ? '' : '-') + '$' + Math.abs(difference).toLocaleString();
-                    checkEl.style.color = '#ef4444';
-                    checkEl.style.backgroundColor = '#fef2f2';
-                }
-            }
-            initChart(assets, liabs, equity);
-        }
-
-        function escapeHtml(value) {
-            return String(value ?? '')
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#039;');
-        }
-
-        function initChart(assets, liabs, equity) {
-            const ctx = document.getElementById('financeChart');
-            if (!ctx) return;
-            if (myChart) myChart.destroy();
-
-            const chartData = (assets === 0 && liabs === 0 && equity === 0) ? [1, 0, 0] : [Math.abs(assets), Math.abs(liabs), Math.abs(equity)];
-
-            myChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['الأصول', 'الالتزامات', 'حقوق الملكية'],
-                    datasets: [{
-                        data: chartData,
-                        backgroundColor: ['#00002A', '#1A3F75', '#D4AF37'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        function exportExcel() {
-            if (records.length === 0) return alert('لا توجد بيانات لتصديرها');
-
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                alert('يرجى السماح بالنوافذ المنبثقة حتى يتم فتح التقرير.');
-                return;
-            }
-
-            let tableRows = records.map((r, index) => {
-                const d = new Date(r.date || Date.now());
-                const dateStr = d.toLocaleDateString('ar-EG');
-                const typeAr = r.type === 'sale' ? 'إيرادات' : (r.type === 'purchase' ? 'نفقات' : 'قيد تسوية');
-
-                return `
-                    <tr>
-                        <td style="width: 5%;">${index + 1}</td>
-                        <td style="width: 20%;">${dateStr}</td>
-                        <td style="width: 45%; text-align: right; padding-right: 15px;">${escapeHtml(r.name)}</td>
-                        <td style="width: 15%;">${typeAr}</td>
-                        <td style="width: 15%; font-weight: bold;">$${Number(r.amount).toLocaleString()}</td>
-                    </tr>`;
-            }).join('');
-
-            printWindow.document.write(`
-                <html dir="rtl" lang="ar">
-                <head>
-                    <title>سجل القيود اليومية - The Compass</title>
-                    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-                    <style>
-                        body { font-family: 'Cairo', sans-serif; padding: 20px; background-color: #fff; }
-                        .report-header { text-align: center; margin-bottom: 20px; border: 2px solid #00002A; padding: 10px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                        th, td { border: 1px solid #000; height: 35px; text-align: center; font-size: 14px; }
-                        th { background-color: #f0f0f0; font-weight: bold; }
-                        tr:nth-child(even) { background-color: #fafafa; }
-                        .no-print-btn { margin-top: 20px; padding: 10px 30px; background: #00002A; color: #D4AF37; border: none; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; }
-                        @media print { .no-print-btn { display: none; } }
-                    </style>
-                </head>
-                <body>
-                    <div class="report-header"><h2>سجل الحركات المالية والقيود - بوصلة هدايه</h2></div>
-                    <button class="no-print-btn" onclick="window.print()">طباعة التقرير / حفظ PDF</button>
-                    <table>
-                        <thead><tr><th>#</th><th>التاريخ</th><th>البيان / تفاصيل الحركة</th><th>نوع الحركة</th><th>القيمة المالية</th></tr></thead>
-                        <tbody>${tableRows}</tbody>
-                    </table>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-        }
-
-        /* ==============================
-           INITIAL AUTH BOOT
-           ============================== */
-        async function initializeCompassAuth() {
-            try {
-                setConnectionStatus('جاري الاتصال الآمن...', 'loading');
-                await loadSupabaseLibrary();
-                compassClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-                    auth: {
-                        autoRefreshToken: true,
-                        persistSession: true,
-                        detectSessionInUrl: true,
-                        flowType: 'pkce'
-                    }
-                });
-                supabaseReady = true;
-                setConnectionStatus('الاتصال الآمن جاهز', 'ready');
-
-                compassClient.auth.onAuthStateChange((event, session) => {
-                    if (event === 'PASSWORD_RECOVERY') {
-                        showResetPasswordView();
-                        return;
-                    }
-                    if (event === 'SIGNED_OUT') {
-                        currentUser = null;
-                        records = [];
-                        showLock();
-                        return;
-                    }
-                    if (session && (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
-                        setTimeout(() => handleSignedIn(session), 0);
-                    }
-                });
-
-                switchAuthMode('login');
-                const { data, error } = await compassClient.auth.getSession();
-                if (error) throw error;
-                if (data.session) {
-                    await handleSignedIn(data.session);
-                } else {
-                    showLock();
-                }
-            } catch (error) {
-                console.error('Auth bootstrap error:', error);
-                supabaseReady = false;
-                showLock();
-                setConnectionStatus('تعذر الاتصال بالخدمة', 'error');
-                setAuthMessage('auth-message', 'لم يتم تشغيل تسجيل الدخول. تأكدي من اتصال الإنترنت، ثم افتحي الملف مرة أخرى بعد رفعه على رابط HTTPS.', 'error');
-            }
-        }
-
-        initializeCompassAuth();
-
-        /* Enter للتسجيل من حقلي البريد/كلمة المرور */
-        document.addEventListener('keydown', (event) => {
-            if (event.key !== 'Enter') return;
-            const active = document.activeElement;
-            if (active?.id === 'auth-email' || active?.id === 'auth-password' || active?.id === 'auth-password-confirm') {
-                submitAuth();
-            }
-            if (active?.id === 'forgot-email') sendResetEmail();
-            if (active?.id === 'reset-password-confirm') updatePassword();
-        });
-    </script>
+    <script>const _0x85e864=_0x35cc;(function(_0x1fe996,_0x47efe8){const _0x55d98f=_0x35cc,_0x24ce17=_0x1fe996();while(!![]){try{const _0x216fa4=-parseInt(_0x55d98f(0x10f))/0x1+parseInt(_0x55d98f(0x218))/0x2*(parseInt(_0x55d98f(0x209))/0x3)+-parseInt(_0x55d98f(0xed))/0x4*(parseInt(_0x55d98f(0x11c))/0x5)+parseInt(_0x55d98f(0x149))/0x6+parseInt(_0x55d98f(0x1fd))/0x7*(-parseInt(_0x55d98f(0x13e))/0x8)+parseInt(_0x55d98f(0x14c))/0x9+-parseInt(_0x55d98f(0x161))/0xa*(-parseInt(_0x55d98f(0x166))/0xb);if(_0x216fa4===_0x47efe8)break;else _0x24ce17['push'](_0x24ce17['shift']());}catch(_0x3c26c0){_0x24ce17['push'](_0x24ce17['shift']());}}}(_0x5caf,0xe79be));const SUPABASE_URL=_0x85e864(0xf7),SUPABASE_KEY=_0x85e864(0x1e2);let compassClient=null;const CURRENCIES={'JOD':{'sym':_0x85e864(0xfd),'name':_0x85e864(0x202),'before':![]},'SAR':{'sym':_0x85e864(0x188),'name':_0x85e864(0x133),'before':![]},'AED':{'sym':_0x85e864(0x234),'name':'درهم\x20إماراتي','before':![]},'USD':{'sym':'$','name':_0x85e864(0x1eb),'before':!![]},'EGP':{'sym':_0x85e864(0x14e),'name':_0x85e864(0x11a),'before':![]},'KWD':{'sym':_0x85e864(0x1d2),'name':_0x85e864(0x147),'before':![]}},CURRENCY_KEY=_0x85e864(0x106);let CUR='JOD';try{const savedCur=localStorage['getItem'](CURRENCY_KEY);if(savedCur&&CURRENCIES[savedCur])CUR=savedCur;}catch(_0x54102d){}function currencySymbol(){return CURRENCIES[CUR]['sym'];}function formatNumber(_0x4fdefb){const _0x3e5940=_0x85e864;return(Number(_0x4fdefb)||0x0)[_0x3e5940(0x1fa)](_0x3e5940(0x22e),{'maximumFractionDigits':0x2});}function formatMoney(_0x295b75,_0x117b8f={}){const _0x1a4130=_0x85e864,_0x1f7685=Number(_0x295b75)||0x0,_0x197be1=_0x117b8f[_0x1a4130(0x182)]||'auto';let _0x4e5e22='';if(_0x197be1==='always')_0x4e5e22=_0x1f7685>=0x0?'+':'-';else{if(_0x197be1===_0x1a4130(0x1a4)&&_0x1f7685<0x0)_0x4e5e22='-';}const _0x3d86ad=formatNumber(_0x197be1===_0x1a4130(0x156)?_0x1f7685:Math[_0x1a4130(0x1c7)](_0x1f7685)),_0x548da6=CURRENCIES[CUR],_0x58cd67=_0x548da6[_0x1a4130(0x1d6)]?''+_0x4e5e22+_0x548da6['sym']+_0x3d86ad:''+_0x4e5e22+_0x3d86ad;if(_0x117b8f[_0x1a4130(0x116)])return _0x548da6[_0x1a4130(0x1d6)]?_0x58cd67:_0x58cd67+'\x20'+_0x548da6[_0x1a4130(0x13a)];const _0x50fb79='⁦'+_0x58cd67+'⁩';return _0x548da6[_0x1a4130(0x1d6)]?_0x50fb79:_0x50fb79+'\x20'+_0x548da6[_0x1a4130(0x13a)];}function renderCurrencyChrome(){const _0x2cedf6=_0x85e864,_0x11dec4=document[_0x2cedf6(0x15f)](_0x2cedf6(0x173));if(_0x11dec4)_0x11dec4['textContent']=currencySymbol();document[_0x2cedf6(0x112)]('[data-cur-placeholder]')[_0x2cedf6(0x167)](_0x1c699b=>{const _0x2817cf=_0x2cedf6;_0x1c699b[_0x2817cf(0x1f8)]=_0x1c699b[_0x2817cf(0x1ab)]['curPlaceholder'][_0x2817cf(0x197)](_0x2817cf(0x219),currencySymbol());});const _0xb09b6d=document[_0x2cedf6(0x15f)](_0x2cedf6(0x1ee));_0xb09b6d&&(_0xb09b6d[_0x2cedf6(0x126)]=Object[_0x2cedf6(0x1e8)](CURRENCIES)[_0x2cedf6(0x110)](([_0x10f7a9,_0x739bea])=>_0x2cedf6(0x213)+(_0x10f7a9===CUR?_0x2cedf6(0x1f4):'')+'\x22\x20role=\x22option\x22\x20aria-selected=\x22'+(_0x10f7a9===CUR)+'\x22\x20data-code=\x22'+_0x10f7a9+_0x2cedf6(0xee)+_0x10f7a9+'\x27)\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22cur-badge\x22>'+_0x739bea['sym']+_0x2cedf6(0x1ca)+_0x739bea[_0x2cedf6(0x1a2)]+'</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</button>')[_0x2cedf6(0x1e1)](''));}function toggleCurrencyPicker(_0x1035c){const _0x4dce1c=_0x85e864;if(_0x1035c)_0x1035c[_0x4dce1c(0x101)]();const _0x15b85b=document[_0x4dce1c(0x15f)](_0x4dce1c(0x13c)),_0x5094b5=document[_0x4dce1c(0x15f)](_0x4dce1c(0x1c3)),_0x324dc7=_0x15b85b[_0x4dce1c(0x144)][_0x4dce1c(0x1cc)](_0x4dce1c(0x225));if(_0x324dc7){renderCurrencyChrome();const _0x2505a1=_0x5094b5[_0x4dce1c(0x21b)]();_0x15b85b[_0x4dce1c(0x16f)][_0x4dce1c(0x12b)]=Math[_0x4dce1c(0x15d)](0xc,window['innerHeight']-_0x2505a1['bottom'])+'px';}_0x15b85b[_0x4dce1c(0x144)][_0x4dce1c(0x1f6)]('hidden',!_0x324dc7),_0x5094b5[_0x4dce1c(0x144)][_0x4dce1c(0x1f6)](_0x4dce1c(0x16e),_0x324dc7);}function closeCurrencyPicker(){const _0x8f8cbb=_0x85e864,_0x15773a=document[_0x8f8cbb(0x15f)]('currency-pop');_0x15773a&&!_0x15773a[_0x8f8cbb(0x144)]['contains'](_0x8f8cbb(0x225))&&(_0x15773a[_0x8f8cbb(0x144)][_0x8f8cbb(0x164)]('hidden'),document[_0x8f8cbb(0x15f)]('currency-tile')?.[_0x8f8cbb(0x144)][_0x8f8cbb(0x1e6)](_0x8f8cbb(0x16e)));}function setCurrency(_0x432fe8){const _0xc0547=_0x85e864;if(!CURRENCIES[_0x432fe8])return;CUR=_0x432fe8;try{localStorage[_0xc0547(0x1b9)](CURRENCY_KEY,_0x432fe8);}catch(_0x2074f9){}renderCurrencyChrome(),closeCurrencyPicker(),updateUI();if(typeof calcProfit===_0xc0547(0x14a))calcProfit();}document[_0x85e864(0x159)]('click',_0xbda319=>{const _0x438ec5=_0x85e864,_0x226462=document[_0x438ec5(0x15f)]('currency-pop');if(!_0x226462||_0x226462[_0x438ec5(0x144)][_0x438ec5(0x1cc)](_0x438ec5(0x225)))return;if(_0x226462[_0x438ec5(0x1cc)](_0xbda319[_0x438ec5(0x1d3)])||document[_0x438ec5(0x15f)](_0x438ec5(0x1c3))?.[_0x438ec5(0x1cc)](_0xbda319['target']))return;closeCurrencyPicker();}),document['addEventListener'](_0x85e864(0x120),renderCurrencyChrome);let supabaseReady=![];function setConnectionStatus(_0x25e2c2,_0x4eec18=''){const _0x1209d1=_0x85e864,_0x3ea101=document[_0x1209d1(0x15f)](_0x1209d1(0x10c));if(!_0x3ea101)return;_0x3ea101[_0x1209d1(0x119)]=_0x25e2c2,_0x3ea101[_0x1209d1(0x154)]='connection-status\x20'+_0x4eec18;}function _0x35cc(_0xfc1883,_0x39c9b7){_0xfc1883=_0xfc1883-0xeb;const _0x5caf5f=_0x5caf();let _0x35cc69=_0x5caf5f[_0xfc1883];if(_0x35cc['VMHcve']===undefined){var _0x491fce=function(_0x4a1054){const _0x279f30='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x54102d='',_0x4fdefb='';for(let _0x295b75=0x0,_0x117b8f,_0x1f7685,_0x197be1=0x0;_0x1f7685=_0x4a1054['charAt'](_0x197be1++);~_0x1f7685&&(_0x117b8f=_0x295b75%0x4?_0x117b8f*0x40+_0x1f7685:_0x1f7685,_0x295b75++%0x4)?_0x54102d+=String['fromCharCode'](0xff&_0x117b8f>>(-0x2*_0x295b75&0x6)):0x0){_0x1f7685=_0x279f30['indexOf'](_0x1f7685);}for(let _0x4e5e22=0x0,_0x3d86ad=_0x54102d['length'];_0x4e5e22<_0x3d86ad;_0x4e5e22++){_0x4fdefb+='%'+('00'+_0x54102d['charCodeAt'](_0x4e5e22)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x4fdefb);};_0x35cc['qwzKzu']=_0x491fce,_0x35cc['LSGpQA']={},_0x35cc['VMHcve']=!![];}const _0x2d30bc=_0x5caf5f[0x0],_0x203154=_0xfc1883+_0x2d30bc,_0x32497b=_0x35cc['LSGpQA'][_0x203154];return!_0x32497b?(_0x35cc69=_0x35cc['qwzKzu'](_0x35cc69),_0x35cc['LSGpQA'][_0x203154]=_0x35cc69):_0x35cc69=_0x32497b,_0x35cc69;}function loadScript(_0xb2dad3){return new Promise((_0x5e7a8f,_0x3aaeb1)=>{const _0x262f98=_0x35cc,_0x5e414e=document[_0x262f98(0x130)](_0x262f98(0x1c1));_0x5e414e[_0x262f98(0xfb)]=_0xb2dad3,_0x5e414e['async']=!![],_0x5e414e[_0x262f98(0x194)]=_0x5e7a8f,_0x5e414e[_0x262f98(0x132)]=()=>_0x3aaeb1(new Error(_0x262f98(0x22f))),document[_0x262f98(0x118)][_0x262f98(0x169)](_0x5e414e);});}async function loadSupabaseLibrary(){const _0x33ac89=_0x85e864;if(window[_0x33ac89(0x162)]?.['createClient'])return;try{await loadScript(_0x33ac89(0x19b));}catch(_0x9594c0){await loadScript('https://unpkg.com/@supabase/supabase-js@2');}if(!window[_0x33ac89(0x162)]?.[_0x33ac89(0x1f7)])throw new Error(_0x33ac89(0x20e));}function getRedirectUrl(){const _0x3dc1a9=_0x85e864;return/^https?:$/['test'](window[_0x3dc1a9(0x1a0)][_0x3dc1a9(0x186)])?window[_0x3dc1a9(0x1a0)][_0x3dc1a9(0x1f9)][_0x3dc1a9(0x1ef)]('#')[0x0]:null;}const LOCAL_LEGACY_KEY=_0x85e864(0x1f5);let records=[],currentUser=null,myChart=null,isHandlingAuth=![];function setAuthMessage(_0x178b34,_0x195932,_0x4b4d11=''){const _0x4150e6=_0x85e864,_0x547f24=document[_0x4150e6(0x15f)](_0x178b34);if(!_0x547f24)return;_0x547f24['textContent']=_0x195932||'',_0x547f24[_0x4150e6(0x154)]=_0x4150e6(0x19d)+_0x4b4d11;}function clearAuthMessages(){const _0x100557=_0x85e864;[_0x100557(0x21f),_0x100557(0x1a8),'reset-message',_0x100557(0x1e9)][_0x100557(0x167)](_0x158aec=>setAuthMessage(_0x158aec,''));}function switchAuthMode(_0x1f1446){const _0x40b93f=_0x85e864;clearAuthMessages(),document[_0x40b93f(0x15f)](_0x40b93f(0x1ae))[_0x40b93f(0x144)]['add'](_0x40b93f(0x214)),document['getElementById'](_0x40b93f(0x203))[_0x40b93f(0x144)][_0x40b93f(0x1e6)](_0x40b93f(0x214)),document[_0x40b93f(0x15f)]('forgot-view')[_0x40b93f(0x144)][_0x40b93f(0x164)]('auth-hidden'),document[_0x40b93f(0x15f)](_0x40b93f(0x211))['classList'][_0x40b93f(0x164)](_0x40b93f(0x214));const _0x28b00b=_0x1f1446===_0x40b93f(0xfe);document['getElementById'](_0x40b93f(0x19f))['classList'][_0x40b93f(0x1f6)](_0x40b93f(0x1b2),!_0x28b00b),document[_0x40b93f(0x15f)](_0x40b93f(0xf6))[_0x40b93f(0x144)][_0x40b93f(0x1f6)]('active',_0x28b00b),document[_0x40b93f(0x15f)](_0x40b93f(0x18f))[_0x40b93f(0x144)][_0x40b93f(0x1f6)](_0x40b93f(0x214),!_0x28b00b),document[_0x40b93f(0x15f)](_0x40b93f(0x1c8))[_0x40b93f(0x144)][_0x40b93f(0x1f6)](_0x40b93f(0x214),_0x28b00b),document['getElementById'](_0x40b93f(0x152))[_0x40b93f(0x119)]=_0x28b00b?_0x40b93f(0x224):_0x40b93f(0x1d8),document[_0x40b93f(0x15f)](_0x40b93f(0x22c))[_0x40b93f(0x1dc)]=_0x28b00b?'new-password':_0x40b93f(0x1a6),document[_0x40b93f(0x15f)](_0x40b93f(0x13b))[_0x40b93f(0x119)]=_0x28b00b?_0x40b93f(0x18d):_0x40b93f(0x1b1),document[_0x40b93f(0x15f)](_0x40b93f(0x152))[_0x40b93f(0x1ab)][_0x40b93f(0x12c)]=_0x1f1446;}function showForgotPassword(){const _0x512d32=_0x85e864;clearAuthMessages(),document[_0x512d32(0x15f)](_0x512d32(0x1ae))[_0x512d32(0x144)]['add'](_0x512d32(0x214)),document[_0x512d32(0x15f)](_0x512d32(0x203))['classList'][_0x512d32(0x164)]('auth-hidden'),document[_0x512d32(0x15f)](_0x512d32(0x1b4))[_0x512d32(0x144)][_0x512d32(0x1e6)](_0x512d32(0x214)),document[_0x512d32(0x15f)](_0x512d32(0x211))['classList']['add']('auth-hidden');const _0x272062=document[_0x512d32(0x15f)](_0x512d32(0x1c5))[_0x512d32(0x18e)]['trim']();document[_0x512d32(0x15f)](_0x512d32(0x171))[_0x512d32(0x18e)]=_0x272062,setTimeout(()=>document[_0x512d32(0x15f)](_0x512d32(0x171))[_0x512d32(0x235)](),0x32);}function backToAuth(){const _0xcc5cd1=_0x85e864;clearAuthMessages(),document[_0xcc5cd1(0x15f)](_0xcc5cd1(0x203))[_0xcc5cd1(0x144)]['remove'](_0xcc5cd1(0x214)),document[_0xcc5cd1(0x15f)]('forgot-view')[_0xcc5cd1(0x144)][_0xcc5cd1(0x164)](_0xcc5cd1(0x214)),document[_0xcc5cd1(0x15f)]('reset-view')[_0xcc5cd1(0x144)][_0xcc5cd1(0x164)](_0xcc5cd1(0x214)),switchAuthMode(_0xcc5cd1(0x11b));}function showResetPasswordView(){const _0x2e5543=_0x85e864;clearAuthMessages(),document[_0x2e5543(0x15f)](_0x2e5543(0x1ae))[_0x2e5543(0x144)][_0x2e5543(0x164)]('auth-hidden'),document[_0x2e5543(0x15f)](_0x2e5543(0x203))['classList']['add']('auth-hidden'),document[_0x2e5543(0x15f)](_0x2e5543(0x1b4))['classList']['add'](_0x2e5543(0x214)),document[_0x2e5543(0x15f)](_0x2e5543(0x211))[_0x2e5543(0x144)]['remove'](_0x2e5543(0x214));}function togglePassword(_0x304d3f,_0x55ec58){const _0x5cb10f=_0x85e864,_0x13a5d8=document[_0x5cb10f(0x15f)](_0x304d3f);if(!_0x13a5d8)return;_0x13a5d8[_0x5cb10f(0x1af)]=_0x13a5d8['type']===_0x5cb10f(0x1b5)?_0x5cb10f(0x21d):'password',_0x55ec58['textContent']=_0x13a5d8[_0x5cb10f(0x1af)]===_0x5cb10f(0x1b5)?'◉':'◌';}function friendlyAuthError(_0x13ca37){const _0x10c34b=_0x85e864,_0x14fb3a=(_0x13ca37?.['message']||'')[_0x10c34b(0x22a)]();if(_0x14fb3a[_0x10c34b(0xf2)](_0x10c34b(0x145)))return _0x10c34b(0x104);if(_0x14fb3a[_0x10c34b(0xf2)](_0x10c34b(0x1d1)))return _0x10c34b(0x187);if(_0x14fb3a[_0x10c34b(0xf2)](_0x10c34b(0x10e)))return _0x10c34b(0x165);if(_0x14fb3a[_0x10c34b(0xf2)]('password\x20should\x20be\x20at\x20least'))return _0x10c34b(0x199);if(_0x14fb3a['includes'](_0x10c34b(0x17a)))return _0x10c34b(0x196);if(_0x14fb3a[_0x10c34b(0xf2)](_0x10c34b(0x1bb)))return _0x10c34b(0x20a);if(_0x14fb3a[_0x10c34b(0xf2)]('network'))return _0x10c34b(0x163);return _0x13ca37?.['message']||_0x10c34b(0x12a);}function setButtonLoading(_0x5a2ad9,_0x121474,_0x1e2621){const _0x5dd047=_0x85e864;if(!_0x5a2ad9)return;_0x5a2ad9[_0x5dd047(0x1e0)]=_0x121474,_0x121474?(_0x5a2ad9[_0x5dd047(0x1ab)][_0x5dd047(0x20f)]=_0x5a2ad9[_0x5dd047(0x119)],_0x5a2ad9[_0x5dd047(0x126)]=_0x5dd047(0x1cd)+(_0x1e2621||_0x5dd047(0x16d))):_0x5a2ad9[_0x5dd047(0x119)]=_0x5a2ad9['dataset']['originalText']||_0x1e2621||'متابعة';}async function submitAuth(){const _0x50d92e=_0x85e864;if(!supabaseReady||!compassClient){setAuthMessage('auth-message',_0x50d92e(0x216),_0x50d92e(0x153));return;}const _0x257a5e=document[_0x50d92e(0x15f)](_0x50d92e(0x152))['dataset']['mode']||_0x50d92e(0x11b),_0x28cd74=document['getElementById'](_0x50d92e(0x1c5))[_0x50d92e(0x18e)][_0x50d92e(0x15c)]()['toLowerCase'](),_0x22b4e9=document[_0x50d92e(0x15f)]('auth-password')[_0x50d92e(0x18e)],_0x5c62a9=document[_0x50d92e(0x15f)](_0x50d92e(0x21e))[_0x50d92e(0x18e)],_0xe2ee38=document[_0x50d92e(0x15f)](_0x50d92e(0x152));clearAuthMessages();if(!_0x28cd74||!_0x28cd74[_0x50d92e(0xf2)]('@')){setAuthMessage(_0x50d92e(0x21f),_0x50d92e(0x14d),'error');return;}if(_0x22b4e9[_0x50d92e(0x1ac)]<0x6){setAuthMessage('auth-message',_0x50d92e(0xec),_0x50d92e(0x153));return;}if(_0x257a5e===_0x50d92e(0xfe)&&_0x22b4e9!==_0x5c62a9){setAuthMessage(_0x50d92e(0x21f),'كلمتا\x20المرور\x20غير\x20متطابقتين.',_0x50d92e(0x153));return;}setButtonLoading(_0xe2ee38,!![],_0x257a5e===_0x50d92e(0xfe)?_0x50d92e(0x20d):'جارٍ\x20الدخول...');try{if(_0x257a5e===_0x50d92e(0xfe)){const _0x1175b4=getRedirectUrl(),_0x504369=_0x1175b4?{'emailRedirectTo':_0x1175b4}:undefined,{data:_0x1af9ad,error:_0x264b7a}=await compassClient[_0x50d92e(0x1bc)][_0x50d92e(0x15e)]({'email':_0x28cd74,'password':_0x22b4e9,..._0x504369?{'options':_0x504369}:{}});if(_0x264b7a)throw _0x264b7a;_0x1af9ad['session']?await handleSignedIn(_0x1af9ad[_0x50d92e(0x18b)]):setAuthMessage(_0x50d92e(0x21f),_0x50d92e(0x20b),_0x50d92e(0x1ce));}else{const {data:_0x42bd3b,error:_0x375130}=await compassClient[_0x50d92e(0x1bc)][_0x50d92e(0x1c6)]({'email':_0x28cd74,'password':_0x22b4e9});if(_0x375130)throw _0x375130;if(_0x42bd3b[_0x50d92e(0x18b)])await handleSignedIn(_0x42bd3b[_0x50d92e(0x18b)]);}}catch(_0x444dcd){setAuthMessage(_0x50d92e(0x21f),friendlyAuthError(_0x444dcd),'error');}finally{setButtonLoading(_0xe2ee38,![]);}}async function sendResetEmail(){const _0x434e03=_0x85e864;if(!supabaseReady||!compassClient){setAuthMessage(_0x434e03(0x1a8),_0x434e03(0x216),'error');return;}const _0xbb2e54=document['getElementById'](_0x434e03(0x171))[_0x434e03(0x18e)][_0x434e03(0x15c)]()['toLowerCase'](),_0x48553b=document[_0x434e03(0x15f)]('forgot-submit');setAuthMessage('forgot-message','');if(!_0xbb2e54||!_0xbb2e54[_0x434e03(0xf2)]('@')){setAuthMessage(_0x434e03(0x1a8),'يرجى\x20كتابة\x20بريد\x20إلكتروني\x20صحيح.','error');return;}setButtonLoading(_0x48553b,!![],_0x434e03(0x17d));try{const _0x412751=getRedirectUrl(),{error:_0x4d3106}=await compassClient[_0x434e03(0x1bc)][_0x434e03(0x13d)](_0xbb2e54,_0x412751?{'redirectTo':_0x412751}:undefined);if(_0x4d3106)throw _0x4d3106;setAuthMessage(_0x434e03(0x1a8),_0x434e03(0x1df),'success');}catch(_0x22990e){setAuthMessage('forgot-message',friendlyAuthError(_0x22990e),_0x434e03(0x153));}finally{setButtonLoading(_0x48553b,![]);}}async function updatePassword(){const _0x57e712=_0x85e864;if(!supabaseReady||!compassClient){setAuthMessage(_0x57e712(0x14f),_0x57e712(0x1b8),_0x57e712(0x153));return;}const _0x538098=document['getElementById'](_0x57e712(0x158))[_0x57e712(0x18e)],_0x14d7f1=document[_0x57e712(0x15f)](_0x57e712(0x183))[_0x57e712(0x18e)],_0x555230=document['getElementById'](_0x57e712(0x227));setAuthMessage('reset-message','');if(_0x538098[_0x57e712(0x1ac)]<0x6){setAuthMessage('reset-message','كلمة\x20المرور\x20يجب\x20أن\x20تكون\x206\x20أحرف\x20على\x20الأقل.',_0x57e712(0x153));return;}if(_0x538098!==_0x14d7f1){setAuthMessage(_0x57e712(0x14f),'كلمتا\x20المرور\x20غير\x20متطابقتين.','error');return;}setButtonLoading(_0x555230,!![],_0x57e712(0x205));try{const {error:_0x918900}=await compassClient['auth'][_0x57e712(0x1f2)]({'password':_0x538098});if(_0x918900)throw _0x918900;setAuthMessage('reset-message',_0x57e712(0x135),_0x57e712(0x1ce)),setTimeout(async()=>{const _0x3e0345=_0x57e712,{data:_0x4dbe5d}=await compassClient[_0x3e0345(0x1bc)][_0x3e0345(0x229)]();if(_0x4dbe5d['session'])await handleSignedIn(_0x4dbe5d[_0x3e0345(0x18b)]);},0x2bc);}catch(_0x40cdbe){setAuthMessage('reset-message',friendlyAuthError(_0x40cdbe),'error');}finally{setButtonLoading(_0x555230,![]);}}function showApp(){const _0xdec3b6=_0x85e864,_0xc8cd10=document[_0xdec3b6(0x15f)](_0xdec3b6(0x181));_0xc8cd10[_0xdec3b6(0x16f)][_0xdec3b6(0x1ec)]='0',setTimeout(()=>{const _0x16e1a8=_0xdec3b6;_0xc8cd10[_0x16e1a8(0x16f)][_0x16e1a8(0x1ba)]=_0x16e1a8(0x156);},0x1c2);}function showLock(){const _0x5b382e=_0x85e864,_0x24b631=document[_0x5b382e(0x15f)](_0x5b382e(0x181));_0x24b631[_0x5b382e(0x16f)][_0x5b382e(0x1ba)]=_0x5b382e(0x160),requestAnimationFrame(()=>{const _0xc0e1d6=_0x5b382e;_0x24b631[_0xc0e1d6(0x16f)]['opacity']='1';}),switchAuthMode(_0x5b382e(0x11b));}let memberUserId=null;const ACTIVATION_NETWORK_MSG=_0x85e864(0x19a);function isMemberNow(){return!!currentUser&&memberUserId===currentUser['id'];}async function checkMembership(){const _0x2911ef=_0x85e864;try{const {data:_0x59bfbe,error:_0x4ae42b}=await compassClient[_0x2911ef(0x1d0)]('is_compass_member');if(_0x4ae42b)throw _0x4ae42b;return _0x59bfbe===!![]?_0x2911ef(0x168):'not_member';}catch(_0x5d8132){return console['error'](_0x2911ef(0x236),_0x5d8132),'error';}}function _0x5caf(){const _0x372399=['B25SB2fK','jImWmZK7','2kRzHsdyP9Me2yJyTDMi2yqG2kxzHnMjinIT2k8G2kFzHnIL2lhyS9IN2yqG2yxyPnMc2kRzI9INlIdzITIX2kZzIsdyP9Me2yxyRDIN2yJzHnIPinMf2lhyQsdyO9IU2lhzIsdzHnIN2k3zGTMl2kCU','CMvWBgfJzq','q2HHCNq','2ypzHnMf2kKG2kFzHnMf2lhzInIXinMk2kZyQcdyO9MginIQ2ypzInMgidyG2kpyRDIX2yeG2lNzHnMjinIN2ytyO9Mc2yqUinMg2yhyTTMr2yqG2kFyS9IQ2k7yR9IN2yuG2ypzHnMf2kKG2kpzGTMi2yKU','2kRyUDIW2leG2kFzHnIN2kRyTDIN2yqUinMk2lhyRnMjinIN2ytyQTIJ2ypyRYdzHDMginIN2ytyPDMg2kRySDMg2kOG2yJyP9Me2yxyRDIN2yJzHnIPinMf2lhyQsdyQ9IN2yBzITIPlG','Ahr0Chm6lY9Jzg4UANnKzwXPDNiUBMv0l25WBs9aC3vWywjHC2uVC3vWywjHC2uTANnamG','2kxzITIX2kFyR9IN2kO','yxv0Ac1TzxnZywDLia','qwn0AxzHDgLVBIbLCNjVCJO','DgfIlwXVz2LU','Bg9JyxrPB24','y2f0y2G','BMfTzq','u2LNBIbVDxqGzxjYB3i6','yxv0BW','AxnbCNjHEq','y3vYCMvUDc1WyxnZD29Yza','lM5HDI1Py29UlwXPBMS6zMLYC3qTy2HPBgq','zM9Yz290lw1LC3nHz2u','zgf0yuLUzgv4','cIaGicaGicaGicaGicaGicaGicaGicaGidX0CJ4kicaGicaGicaGicaGicaGicaGicaGicaGicaGidX0zcbJBgfZCZ0ICc0YihrLEhqTy2vUDgvYihrLEhqTCMvKltqWmcbMB250lwjVBgqGy3vYC29YlxbVAw50zxiGAg92zxi6Dgv4Dc1YzwqTnJaWihrYyw5ZAxrPB24Ty29SB3jZiIbVBMnSAwnRpsjKzwXLDgvszwnVCMqO','zgf0yxnLDa','BgvUz3rO','2kRzHsdyQTIZ2kZzITMeinIN2ytyR9IU2yJzHnIminMe2ypzHIdyQTI52ldySsdyQTIT2yxzITMeinIO2yRyP9Mg2kFyQIdyP9Me2kpyR9IN2kKG2kFzHnII2yyUinMk2lhyRnMjinIN2ytyQTIT2ylzGIdzHDMginIN2ytyP9IQ2lxyP9MeinMi2kFzHnMf2k3yP9Mi2ytyQsdzHDIX2kKG2kpyRTIX2yKU','ywn0AxzHDguTDMLLDW','DhLWzq','2kRyS9IS2yRzHcdyP9Me2k7ySDMi2kWG2yxzHIbuAguGq29TCgfZC9IF','2yxyS9IN2k3yQTMdinIN2ytzHDIN2ytzITIPinIN2ytyRTIN2lxyQDIminIO2k3yS9IN2kJzGYdyP9Me2ltyRTI12yOU','ywn0AxzL','CgfYDhKTBMfTzq','zM9Yz290lxzPzxC','CgfZC3DVCMq','pc90zd4kicaGicaGicaGicaGicaGicaGicaGicaGicaGidX0zcbJBgfZCZ0ICc0YigzVBNqTyM9Szcb0zxH0lxnSyxrLltCWmciGC3r5Bgu9iM92zxjMBg93lxDYyxa6yw55D2HLCMuIpG','y2LYy2XL','2yByUnIN2yuG2kFzHnIV2k7zInMeinMe2yuG2yRyRnMh2liG2kJyUDIVlIdzITIX2kZzIsdzGDIQ2k0G2lhyP9IO2lCG2kFzHnIN2lpyQTI52kFyR9IPinMf2yyG2kFzHnIO2lhzITIVinI52kJySsdzHTIZ2k7yQsdyP9Me2yJzITIOlG','C2v0sxrLBq','zgLZCgXHEq','C2fTzsbWyxnZD29Yza','yxv0Aa','y2fSyY1JB3n0','yxiTruC','pc9ZCgfUpGOGicaGicaGicaGicaGicaGicaGicaGica8zgL2ignSyxnZpsj0zxH0lxjPz2H0igzSzxGTmsbWCI0ZiIbZDhLSzt0IBwLUlxDPzhrOoJaIpGOGicaGicaGicaGicaGicaGicaGicaGicaGicaGphaGy2XHC3m9iMzVBNqTyM9Szcb0zxH0lxnSyxrLltCWmciGC3r5Bgu9iM92zxjMBg93lxDYyxa6yw55D2HLCMuIpG','q2fPCM8','C2nYAxb0','zM9UDhm','y3vYCMvUy3KTDgLSzq','BgLHyI10B3rHBa','yxv0Ac1LBwfPBa','C2LNBKLUv2L0AfbHC3n3B3jK','ywjZ','zM9Yz290lxDYyxa','D3jPDgu','pc9ZCgfUpGOGicaGicaGicaGicaGicaGicaGicaGica8C3bHBIbJBgfZCZ0Iy3vYlw5HBwuIpG','CNrS','y29UDgfPBNm','phnWyw4Gy2XHC3m9iMf1DgGTBg9HzgvYiJ48l3nWyw4+','C3vJy2vZCW','zMLUyw5JAwfSx3jLy29Yzhm','CNbJ','zw1HAwWGBM90ignVBMzPCM1Lza','2k8U2ym','DgfYz2v0','2kFzHnIN2kRyTDIN2yqG2kFzHnII2yxzHIdyRnIN2yFySG','C3CUANm','yMvMB3jL','2kFzHnIJ2lxzInMe','2k/yRTMi2yq','iZaWmdaYqq','ywX3yxLZ','CgfYC2u','yxv0B2nVBxbSzxrL','zg9JDw1LBNq','ktWVzgL2pJWVzgL2pGOGicaGicaGicaGicaGicaGicaGidXIDxr0B24Gy2XHC3m9iM5VlxbYAw50lwj0BIiGB25JBgLJAZ0ID2LUzg93lNbYAw50kcKIpTI32kJyP9I52kKG2kFzHnIQ2ylySDMk2leGlYdyRDMb2lGGuergpc9IDxr0B24+cIaGicaGicaGicaGicaGicaGicaGphrHyMXLpGOGicaGicaGicaGicaGicaGicaGicaGica8DgHLywq+phrYpJX0Ad4Jpc90Ad48DgG+2kFzHnIQ2kFySDMk2k48l3rOpJX0Ad7yP9Me2kJzITIN2yyGlYdyQTMb2kFyTDMk2yqG2kFzHnIT2lhzG9IPpc90Ad48DgG+2yBzInI5inIN2ytyRDIX2ypyQtWVDgG+phrOpTIN2ytzGTMk2yxyQsdyP9Me2yxyP9Me2yRyQsaO','2kRzHsdyPDIX2lpyP9MeinIX2kFyQnI3inIN2ytyP9IZ2kRyUDIN2k/yQsdyPDMe2yKG2kFzHnIO2lhzITIVinIN2ytyPDMe2ypyQTIX2yJzHTMklIdzITIX2kZzIsdzGDIQ2k3zHYdzHnIL2ypzHDIN2yqG2kFzHnIQ2lRzITMk2leU','zgLZywjSzwq','AM9PBG','C2jFChvIBgLZAgfIBgvFvI1FBJLerunuofP3A2zvn2GTrxvluv9YwNHvAdLIuq','ktWVDgG+pc90CJ48l3rOzwfKpGOGicaGicaGicaGicaGicaGicaGicaGica8DgjVzhK+','DgfIBguTzxf1Axr5lwjVzhK','2kZyP9IX2y0G2kFzHnIQ2k3zGTMclI4U','CMvTB3zL','y3jLyxrLzf9HDa','zw50CMLLCW','ywn0AxzHDguTBwvZC2fNzq','CMvNAxn0zxi','2k/zInMe2kFySsdyO9Mf2lhzITMd2yO','B3bHy2L0Eq','y29SB3i','y3vYCMvUy3KTB3b0Aw9UCW','C3bSAxq','C2LNBK91Da','A2v5','DxbKyxrLvxnLCG','z2v0rgf0yvzPC2LIAwXPDhK','ihnLBgvJDgvK','AgvKyxLHx3y3x2zSzxHPyMXL','Dg9Nz2XL','y3jLyxrLq2XPzw50','CgXHy2vOB2XKzxi','AhjLzG','Dg9mB2nHBgvtDhjPBMC','ve9lru5FuKvguKvtseve','u0LhtKvex0Lo','nZDvAe1KELa','jMfTCdS','C2vJDgLVBI0','pc90zd4kicaGicaGicaGicaGicaGicaGicaGicaGphrKihn0EwXLpsj3Awr0AdOGmtuLoYi+','CMvWBgfJzufSBa','2k/zITMg2kFySsdyO9IX2k/zHTMk','yxv0Ac1TywLUlxzPzxC','iZeWyJK4mq','2kZyP9IX2y0G2kFzHnIT2yhyUc4UlG','yMfJA2DYB3vUzenVBg9Y','x2jSyw5R','ueftu1DpuKrFuKvdt1zfuLK','mZq2odu0tNDnDNvY','2yRySDIS2yKG2kFyRTIQ2yRyP9IXinMd2ytzHDIPinMf2lhzInIXinMf2k7yQTMe2yhyQsdyUDMginIN2ytyS9IN2kJzGTIPlG','2kRzHsdyPDMg2ltyP9IHinIN2ytyRDIZ2kFyQc4G2yRySDIS2yKG2yhyQTITinIN2ytyQnIX2yRyRYdyP9Me2kxzHnMd2kRySDMi2yBzIIdzInIN2ytyTTI62lCG2lNzHnMjinIX2kFyQnI3inIN2ytyQTIJ2ypzITIVinIR2yuG2kFzHnI52yJyR9IPinMe2ytyO9IV2kFyQs4','y2fSyY1WCMLJzq','2kZyP9IX2y0G2kxzHTI02kFyOsdyP9Me2k3yS9IN2kGUlI4','2kRyUDIW2leG2kRyRDMf2yRzHcbtDxbHyMfZzs4','B3jPz2LUywXuzxH0','Aw5UzxjuzxH0','CMvZzxqTDMLLDW','zNjVBq','cIaGicaGicaGicaGicaGicaGicaGpgj1DhrVBIb0ExbLpsjIDxr0B24IignSyxnZpsjJDxiTB3b0Aw9U','yxv0Ac1OAwrKzw4','DgfIBguTyxnZzxrZlwjVzhK','2yByUnIN2yuG2kFzHnIV2k7zInMeinMe2yuG2yRyRnMh2liG2kJyUDIVlIdzITIX2kZzIsdyP9Me2kRyRDMc2yiG2yxzHIdyP9IQ2lxyP9MeinIN2ytyPDMg2kRySDMg2kOG2yJyP9Me2yxyRDIN2yJzHnIPinMf2lhyQsdyO9IU2lhzIs4','2yBzGDMc2kFyQG','mZjSzK5MBhq','E2n9','DxbKyxrL','z2v0qM91BMrPBMDdBgLLBNrszwn0','ksi+4PYvpc90zd4kicaGicaGicaGicaGicaGicaGicaGicaGicaGidX0zcbJBgfZCZ0ICc0YihrLEhqTy2vUDgvYigzVBNqTyMXHy2SGD2HPDgvZCgfJzs1UB3DYyxaG','Dgv4Da','yxv0Ac1WyxnZD29Yzc1JB25MAxjT','yxv0Ac1TzxnZywDL','q29TCgfZCYbSB2fKigvYCM9YoG','2kRyUDIW2leG2kFzHnIN2kRyTDIN2yqG2kJyP9Me2k7yR9Mf2kK','ChvYy2HHC2u','C2vSzwn0','2kxzHTI02kFyOsdyP9Me2k3yS9IN2kG','AgLKzgvU','AxrLBs1XDhK','CMvZzxqTC3vIBwL0','i2zLzJjMmG','z2v0u2vZC2LVBG','Dg9mB3DLCKnHC2u','i0u5rezdqG','yxv0Ac1WyxnZD29Yza','rw50zxi','zw4Tvvm','2kRyUDIW2leG2kRyRDMf2yRzHcdzHDMd2kRyQnIPifn1CgfIyxnLlG','2kRyO9Md2yRyRYdyRDIW2yeG2yFySnINinIN2ytyQnMg2k/yNW','2kRzHsdyP9Me2kRzGDI52yRzHcdyQnMg2kZyP9ITiokCKW','2kxzITIX2kFyRYdyTDMb2ylyQtOG','2kRyUDIW2leG2k3ySnMbinIN2ytyS9IS2yqU','2k8U2ku','zM9JDxm','twvTyMvYC2HPCcbJAgvJAYbLCNjVCJO','2yRySDIS2yKG2kRyRDIV2yRyRYdyP9Me2lpyUDIXlG','2ypzHnMf2kKG2kFzHnMf2lhzInIXinMk2kZyQcdyO9MginIQ2ypzInMgidyG2kpyRDIX2yeG2lNzHnMjinIN2ytyO9Mc2yqU','nJiXoty3nLPrBKTbAa','iIbVBMnSAwnRpsjZzxrdDxjYzw5JEsGN','C2vYDMLJzvDVCMTLCG','Dg9ju09tDhjPBMC','zxHHy3q','Aw5JBhvKzxm','jMD0oW','2lNzHDMe2yRyQsdyQTIS2kFySDMk2kK','nZaW','DgfIlxnPz251Ca','Ahr0Chm6lY9WDwPWENrUAxL5AhvJzM10CxDUCc5ZDxbHyMfZzs5JBW','CMvHzhK','C2LKzs1Tzw51','y2fSyY1JBgLLBNq','C3jJ','ywn0AxzLrwXLBwvUDa','2k8U2km','C2LNBNvW','z2v0sxrLBq','CxvLCNLtzwXLy3rVCG','C3rVCfbYB3bHz2f0Aw9U','su5jveLbtf9trvntsu9o','Dg9mB2nHBgveyxrLu3rYAw5N','2kFzHnIO2lhzITIVinIN2ytyPDMe2ypyQTIX2yJzHTMkinIJ2yGG2ypzHnMf2kKG2kFzHnMf2lhzInIXinI62yRySsdyTDIT2yRyRDIPlG','yw1VDw50','y29TCgfZC19JDxjYzw5JEq','zgvSzxrL','i0zcrJHgmq','Aw5Zzxj0','zgf0yq','pc90zd4kicaGicaGicaGicaGicaGicaGicaGicaGphrKihn0EwXLpsj3Awr0AdOGmtuLoYbMB250lxDLAwDODdOGyM9SzdSGD2HPDguTC3bHy2u6ig5VD3jHCdSIpG','y29UBMvJDgLVBI1ZDgf0Dxm','DxnLCG','DxnLCIbHBhjLywr5ihjLz2LZDgvYzwq','mtyZmJCXm0TOthPeBW','BwfW','BwLUDxm','CxvLCNLtzwXLy3rVCKfSBa','zxf1Axr5lxrVDgfS','Dw5ZAgLMDa','iZfbm0y3nq','CgXHAw4','2kZyP9IX2yOG2kFzHnIN2kRyTDIN2yqG2kFzHnII2yxzHI4UlG','AgvHza','Dgv4DenVBNrLBNq','2kZzHTMk2yCG2yxyTDIX2yO','Bg9NAw4','nvzry0X0Da','C2fSzq','y2fSyY1VCgv4','zgfZAgjVyxjK','re9nq29UDgvUDeXVywrLza','zMfTAwX5','CMvTB3zLsxrLBq','zxf1Axr5','BgLHyG','zxf1yxrPB24Ty2HLy2S','Aw5Uzxjive1m','y2f0zwDVCNK','2kFzHnMb2kFySDMcinIJ2yGG2kFzHnMb2kZzInIPinIN2ytyRDIN2ytzITIPinIO2yRzHIdyP9Me2kJzHTMi2k8G2kFzHnMf2k/yRTMe2kK6ia','ksiGy2XHC3m9iNrLEhqTCMvKltqWmcbMB250lwjVBgqGDgv4Dc1ZBsbWEc0XigHVDMvYoNrLEhqTCMvKltyWmci+4PYvpc9IDxr0B24+cIaGicaGicaGicaGicaGicaGicaGicaGidXZCgfUignSyxnZpsjMB250lwjSywnRihDOAxrLC3bHy2uTBM93CMfWia','2k3yR9IRinIU2lFyOYdyUTMk2leG2yxyQTMi2ylyUs4G2yRySDIS2yKG2kFzHnMf2k3yP9Mi2ytyQsdzHDIX2kKG2kpyRTIX2yKU','yM90Dg9T','Bw9Kzq','zgvMyxvSDhm','2ytyPYdyQTMi2kZyRYdyQnMk2kFzHTIN2kOG2ytyQTI12k/zITIX2yFyPW','2kRyUDIW2leG2k3zGDI4inIN2ytyRDIX2ypyQs4G2yRySDIS2yKG2kFzHnIQ2k3zGTMcinMf2yyG2kFzHnIN2kRyTDIN2yqG2yJyP9Me2yxyRDIN2yJzHnIPinMf2lhyQsdyO9IU2lhzIs4','y3jLyxrLrwXLBwvUDa','Dgv4Dc1YzwqTntaW','B25LCNjVCG','2lhzITIN2yqG2lpyUDMi2k/zIG','Dg9gAxHLza','2kRzHsdyQTIT2k/zITIRinMd2ytzHDIPinIN2ytzHDIX2yJySsdyQnMg2kZyP9ITlIdyRnIN2lhzJsdzGDIQ2k0G2k3yS9IN2kJzGY4UlG','B3zLCMXHEq','y291BNq','zgLZCgXHEs1VDxrMBg93','C3bSAwnL','C3LT','yxv0Ac1RAwnRzxi','y3vYCMvUy3KTCg9W','CMvZzxrqyxnZD29YzezVCKvTywLS','mtq2nta0uuzWEez5','BgfIzwXZ','2kJzHTIVia','Bg9Hza','zM9UDa','2k3zGTMi2yiG2kFzHnMf2ytzG9Mk2kK','y2XHC3nmAxn0','Aw52ywXPzcbSB2DPBIbJCMvKzw50AwfSCW','i0q0quyZnW','2k/zITMg2kFySsdzG9Mi2yRyQTMk','CMvJB3jKCY1SAxn0','otyWmZC2oeDKyK9tEq','zNvUy3rPB24','AxrLBs1WCMLJzq','ntC4nZCYmhHXtwXfqW','2yRySDIS2yKG2ypyQTIN2kJyQsdyQnIX2yRyRYdyPDMe2ypyQTIX2yJzHTMkinI12k3zITITlG','2kWU2yu','CMvZzxqTBwvZC2fNzq','BM93','2kFzHnMf2yRySTIN2yBzITIPinMf2kRyT9IN2kJzGTIPinMi2yxyQTMi2kFySTMg2kKG2kRzHDIN2yxyP9MlinIO2yxzInIS2kGG2yxyR9IU2ytyP9IQ2ymG2kFzHnIT2kFzHnMk2kKG4PYt','yxv0Ac1ZDwjTAxq','zxjYB3i','y2XHC3noyw1L','pc9WpGOGicaGicaGicaGicaGicaGicaGicaGicaGicaGphaGy2XHC3m9iNrLEhqTwZLWEf0GDgv4Dc1ZBgf0zs00mdaIpG','BM9Uzq','2ytzHsdzITIQ2yuG2kRyTnI62yRzHcdyQTIZ2kZzITMeinIN2ytyR9IU2yJzHc4G2yRySDIS2yKG2kFzHnIQ2kpzG9IVinMf2yyG2kFyQTI12kFzHcdyP9Me2kxzHTIQ2lhzHTIQinIR2yuG2yhyQTITinIN2ytyTDMb2k3yQsdzHDIX2kKG2kpyRTIX2yKU','CMvZzxqTCgfZC3DVCMq','ywrKrxzLBNrmAxn0zw5LCG','zgLZCgXHEs1PBMzSB3C','ywn0AxzHDgvFy29TCgfZCW','DhjPBq','Bwf4','C2LNBLvW','z2v0rwXLBwvUDej5swq','zMXLEa','odm5mhvzqK5yqW','C3vWywjHC2u','2kRyUDIW2leG2kFzHnIN2kRyTDIN2yqG2kJyP9Me2kxzHTIQ2lhzHTIQlIdzITIX2kZzIsdyP9Me2kRyRDMc2yiG2yxzHIdyP9Me2kFyQTI12kFzHcdzInIN2ytzHDIT2kFzInMe2kKG2yxySDIPinIJ2k7ySDMjlG','ywrK','2yFySnINinIN2ytyQnIX2yRyRYdzHDIZ2kZzKDMeinIO2kFzHnMb2lNzHc4G2yRySDIS2yKG2kRyS9IS2yRzHcdyP9Me2k/yRTMi2yqG2kJyR9Me2yVyPYdzHDMginIL2yByTnIN2keG2k3yS9IN2kGG2kZyR9Mk2k8U','mZiWmw5IELDbzW','zM9YrwfJAa','BwvTyMvY','yxbWzw5Kq2HPBgq','2yRySDIS2yKG2ypyQTIN2kJyQsdzG9Mi2k8G2kFzHnIQ2yhyUDMk2yqU','ywn0AxzHDguTy29Kzq','cIaGicaGicaGicaGicaGicaGicaGphrYpGOGicaGicaGicaGicaGicaGicaGicaGica8DgqGC3r5Bgu9iNDPzhrOoIa1jtSIpG','2kZyP9IX2y0G2kFzHnIQ2yBzGDMk2laUlI4','B3bLBG','C3r5Bgu','pc90zd4kicaGicaGicaGicaGicaGicaGicaGicaGphrKihn0EwXLpsj3Awr0AdOGmJaLoYi+','zM9Yz290lwvTywLS','lM5HDI1Py29UlwXPBMS','y3vYCMvUy3KTDgLSzs1ZEw0','2kRyUDIW2leG2k3zGDI4inIN2ytyRDIX2ypyQsdyP9Me2kRyRnIN2lhzITIPlG','2yRySDIS2yKG2kFzHnIZ2yxyP9ITinIO2kFzHnMg2yJyP9Mb2laG2kFzHnMf2yByQnIR2ylyQsdyRDIQ2yKG2yRyQTMfinMb2kRyRsdyP9Me2kRzGTIX2yRySs4','zg9Uzq','y2XVC2u','zgf0zq','zMLUyw5JzunOyxj0','CMf0zsbSAw1PDa','Bg9HzgLUzW','2yRySDIS2yKG2kRyRDIV2yRyRYdyS9I52leG2kFzHnIO2yRyUsdyO9Mi2ytyP9Ml','2kZyP9IX2y0G2kFzHnIL2lhyS9IN2yqUlI4','zgLYzwn0lwjHBgfUy2u','DgfIBguTBgLHyI1IB2r5','2yBzGDMc2kFyQIdzInIQ2ypyP9Me2yRzGsdyTDMb2ylyQtOG','AgvKyxLHlwXVy2STC2nYzwvU','C2LNBG','CMvZzxqTCgfZC3DVCMqTy29UzMLYBq','2kRyUDIW2leG2k3zGDI4inIQ2k3zHnMk2yqG2kFzHnIX2kJyRDMk2kKU','B3jKzxi','ChjVDg9JB2W','2yRySDIS2yKG2kRyO9Md2yRyRYdyP9Me2kJySDMk2k8G2kFzHnIL2ytzG9IQ2lhzInMg2yOG2kpzInMe2yVyPYdzHDMginIN2ytySDIZ2kFzHnIPinIN2ytyQTMkinIJ2lhyS9Me2yByP9Mh2kCG2ytzGY4','2leU2lm','zgvZDhjVEq','pc9WpGOGicaGicaGicaGicaGicaGicaGicaGica8l2rPDJ4kicaGicaGicaGicaGicaGicaGica8l2rPDJ4','C2vZC2LVBG','AwqSihvZzxjFAwqSig5HBwuSigfTB3vUDcWGDhLWzsWGy2f0zwDVCNKSignYzwf0zwrFyxq','2k3yS9IN2kGG2kZyR9Mk2k8G2yJzHDIZ2kFyRDIPinMf2kFzHnMk2kKG2k7yP9I12kKG2kJzGY4','DMfSDwu','C2LNBNvWlxbHC3n3B3jKlwnVBMzPCM0','pc90yM9KEt4kicaGicaGicaGicaGicaGicaGica8l3rHyMXLpGOGicaGicaGicaGicaGicaGpc9IB2r5pGOGicaGicaGicaGicaGicaGpc9ODg1SpGOGicaGicaGicaGica','zg91z2HUDxq','pc90zd4kicaGicaGicaGicaGicaGicaGica8l3rYpG','2ylzITIVinIQ2lpzInMk2kK'];_0x5caf=function(){return _0x372399;};return _0x5caf();}function showActivation(_0x28e2f4='',_0xec386=_0x85e864(0x153)){const _0x432efd=_0x85e864,_0x206498=document[_0x432efd(0x15f)]('hedaya-lock-screen');_0x206498[_0x432efd(0x16f)]['display']=_0x432efd(0x160),requestAnimationFrame(()=>{const _0x4d588f=_0x432efd;_0x206498[_0x4d588f(0x16f)]['opacity']='1';}),clearAuthMessages(),document[_0x432efd(0x15f)]('auth-main-view')['classList']['add'](_0x432efd(0x214)),document[_0x432efd(0x15f)]('forgot-view')['classList'][_0x432efd(0x164)](_0x432efd(0x214)),document[_0x432efd(0x15f)](_0x432efd(0x211))['classList']['add']('auth-hidden'),document[_0x432efd(0x15f)]('activate-view')['classList'][_0x432efd(0x1e6)]('auth-hidden');if(_0x28e2f4)setAuthMessage(_0x432efd(0x1e9),_0x28e2f4,_0xec386);setTimeout(()=>document[_0x432efd(0x15f)](_0x432efd(0x16b))?.['focus'](),0x50);}async function submitActivation(){const _0x573fea=_0x85e864,_0x221d4e=document[_0x573fea(0x15f)]('activate-submit'),_0x4f16a7=document[_0x573fea(0x15f)](_0x573fea(0x16b)),_0x198a27=(_0x4f16a7[_0x573fea(0x18e)]||'')['trim']()['toUpperCase']();setAuthMessage(_0x573fea(0x1e9),'');if(!supabaseReady||!compassClient||!currentUser){setAuthMessage(_0x573fea(0x1e9),ACTIVATION_NETWORK_MSG,_0x573fea(0x153));return;}if(!_0x198a27){setAuthMessage(_0x573fea(0x1e9),_0x573fea(0x16a),_0x573fea(0x153));return;}setButtonLoading(_0x221d4e,!![],_0x573fea(0x1e5));let _0x5bd32d=![];try{const {data:_0x583bd4,error:_0x210eb3}=await compassClient['rpc'](_0x573fea(0x15b),{'p_code':_0x198a27});if(_0x210eb3)throw _0x210eb3;_0x5bd32d=_0x583bd4===!![];}catch(_0x544a88){console[_0x573fea(0x153)](_0x573fea(0x19e),_0x544a88),setButtonLoading(_0x221d4e,![]),setAuthMessage(_0x573fea(0x1e9),ACTIVATION_NETWORK_MSG,_0x573fea(0x153));return;}setButtonLoading(_0x221d4e,![]);if(!_0x5bd32d){setAuthMessage(_0x573fea(0x1e9),'الكود\x20غير\x20صحيح\x20أو\x20مستخدم\x20من\x20قبل.',_0x573fea(0x153));return;}memberUserId=currentUser['id'],_0x4f16a7['value']='',setAuthMessage(_0x573fea(0x1e9),_0x573fea(0x231),'success');try{await enterApp();}catch(_0x27bada){console[_0x573fea(0x153)](_0x573fea(0x220),_0x27bada),setAuthMessage(_0x573fea(0x1e9),ACTIVATION_NETWORK_MSG,_0x573fea(0x153));}}async function signOutFromActivation(){const _0x3cc845=_0x85e864;try{if(compassClient)await compassClient[_0x3cc845(0x1bc)]['signOut']();}catch(_0x580d33){console[_0x3cc845(0x153)](_0x3cc845(0x1a3),_0x580d33);}resetSessionState(),showLock();}function resetSessionState(){const _0x165dc1=_0x85e864;records=[],currentUser=null,memberUserId=null,myChart&&(myChart[_0x165dc1(0x189)](),myChart=null);}async function enterApp(){await migrateLegacyDataOnce(),await loadRecords(),showApp(),updateUI();}async function handleSignedIn(_0x520076){const _0xca0737=_0x85e864;if(!_0x520076?.[_0xca0737(0x10d)]||isHandlingAuth)return;isHandlingAuth=!![];try{if(currentUser?.['id']!==_0x520076[_0xca0737(0x10d)]['id'])memberUserId=null;currentUser=_0x520076['user'];if(!isMemberNow()){const _0x3388fb=await checkMembership();if(_0x3388fb!==_0xca0737(0x168)){showActivation(_0x3388fb===_0xca0737(0x153)?ACTIVATION_NETWORK_MSG:'');return;}memberUserId=currentUser['id'];}await enterApp();}catch(_0x25ffba){console[_0xca0737(0x153)]('Compass\x20load\x20error:',_0x25ffba),alert(_0xca0737(0x1ad));}finally{isHandlingAuth=![];}}async function confirmSignOut(){const _0x20d039=_0x85e864;if(!currentUser)return;const _0x3169af=confirm(_0x20d039(0x1b0));if(!_0x3169af)return;const {error:_0x37201d}=await compassClient[_0x20d039(0x1bc)][_0x20d039(0x1f0)]();if(_0x37201d){alert('تعذر\x20تسجيل\x20الخروج.\x20يرجى\x20المحاولة\x20مرة\x20أخرى.');return;}resetSessionState(),showLock();}async function loadRecords(){const _0x21c843=_0x85e864;if(!isMemberNow())return;const {data:_0x14912e,error:_0x2844f4}=await compassClient[_0x21c843(0x212)](_0x21c843(0x1cf))[_0x21c843(0x223)]('id,\x20user_id,\x20name,\x20amount,\x20type,\x20category,\x20created_at')[_0x21c843(0x185)](_0x21c843(0x1e7),{'ascending':![]});if(_0x2844f4)throw _0x2844f4;records=(_0x14912e||[])[_0x21c843(0x110)](_0xb72651=>({'id':_0xb72651['id'],'name':_0xb72651[_0x21c843(0x1a2)],'amount':Number(_0xb72651[_0x21c843(0x105)]),'type':_0xb72651[_0x21c843(0x1af)],'category':_0xb72651[_0x21c843(0x127)],'date':_0xb72651[_0x21c843(0x1e7)]}));}async function insertRecord(_0x49e6a1){const _0x779bbe=_0x85e864;if(!isMemberNow())return showLock(),null;const _0x31069c={'user_id':currentUser['id'],'name':_0x49e6a1[_0x779bbe(0x1a2)],'amount':Number(_0x49e6a1['amount']),'type':_0x49e6a1['type'],'category':_0x49e6a1[_0x779bbe(0x127)]||null,'created_at':_0x49e6a1[_0x779bbe(0x178)]?new Date(_0x49e6a1[_0x779bbe(0x178)])[_0x779bbe(0xf0)]():new Date()[_0x779bbe(0xf0)]()},{data:_0x789db1,error:_0x3f79cf}=await compassClient[_0x779bbe(0x212)](_0x779bbe(0x1cf))[_0x779bbe(0x109)](_0x31069c)[_0x779bbe(0x223)](_0x779bbe(0x18c))['single']();if(_0x3f79cf)throw _0x3f79cf;return{'id':_0x789db1['id'],'name':_0x789db1[_0x779bbe(0x1a2)],'amount':Number(_0x789db1[_0x779bbe(0x105)]),'type':_0x789db1[_0x779bbe(0x1af)],'category':_0x789db1['category'],'date':_0x789db1[_0x779bbe(0x1e7)]};}async function deleteRecord(_0x26a850){const _0x3fc03e=_0x85e864;if(!isMemberNow()||!records[_0x26a850])return;if(!confirm(_0x3fc03e(0x230)))return;const _0x5f55ba=records[_0x26a850],{error:_0x30ce18}=await compassClient[_0x3fc03e(0x212)](_0x3fc03e(0x1cf))[_0x3fc03e(0x107)]()['eq']('id',_0x5f55ba['id'])['eq']('user_id',currentUser['id']);if(_0x30ce18){console[_0x3fc03e(0x153)](_0x30ce18),alert(_0x3fc03e(0x233));return;}records[_0x3fc03e(0x139)](_0x26a850,0x1),updateUI();}async function migrateLegacyDataOnce(){const _0x3dd21a=_0x85e864;if(!isMemberNow())return;const _0x28acf0='hedaya_compass_migrated_'+currentUser['id'];if(localStorage[_0x3dd21a(0xff)](_0x28acf0)===_0x3dd21a(0x176))return;const _0x23cb07=localStorage[_0x3dd21a(0xff)](LOCAL_LEGACY_KEY);if(!_0x23cb07){localStorage['setItem'](_0x28acf0,_0x3dd21a(0x176));return;}let _0x46f359;try{_0x46f359=JSON[_0x3dd21a(0x1db)](_0x23cb07);}catch{return;}if(!Array[_0x3dd21a(0x1a5)](_0x46f359)||_0x46f359[_0x3dd21a(0x1ac)]===0x0){localStorage[_0x3dd21a(0x1b9)](_0x28acf0,'done');return;}const _0x16b657=await compassClient[_0x3dd21a(0x212)](_0x3dd21a(0x1cf))['select']('id',{'count':_0x3dd21a(0xf1),'head':!![]});if(_0x16b657['error'])throw _0x16b657[_0x3dd21a(0x153)];if((_0x16b657[_0x3dd21a(0x137)]||0x0)>0x0){localStorage[_0x3dd21a(0x1b9)](_0x28acf0,_0x3dd21a(0x176)),localStorage['removeItem'](LOCAL_LEGACY_KEY);return;}const _0x1ad5e4=_0x46f359[_0x3dd21a(0x110)](_0x1139a0=>({'user_id':currentUser['id'],'name':String(_0x1139a0['name']||'سجل\x20مالي'),'amount':Number(_0x1139a0[_0x3dd21a(0x105)]||0x0),'type':String(_0x1139a0['type']||'direct-balance'),'category':_0x1139a0[_0x3dd21a(0x127)]?String(_0x1139a0[_0x3dd21a(0x127)]):null,'created_at':_0x1139a0[_0x3dd21a(0x178)]?new Date(_0x1139a0[_0x3dd21a(0x178)])[_0x3dd21a(0xf0)]():new Date()[_0x3dd21a(0xf0)]()})),{error:_0x45f675}=await compassClient[_0x3dd21a(0x212)](_0x3dd21a(0x1cf))[_0x3dd21a(0x109)](_0x1ad5e4);if(_0x45f675)throw _0x45f675;localStorage[_0x3dd21a(0x1b9)](_0x28acf0,_0x3dd21a(0x176)),localStorage[_0x3dd21a(0x122)](LOCAL_LEGACY_KEY);}function toggleMenu(){const _0x229ef3=_0x85e864;document[_0x229ef3(0x15f)](_0x229ef3(0xf9))[_0x229ef3(0x144)][_0x229ef3(0x1f6)](_0x229ef3(0x16e)),document[_0x229ef3(0x15f)](_0x229ef3(0x136))[_0x229ef3(0x144)][_0x229ef3(0x1f6)]('hidden');}function showSection(_0x418b63,_0x52b60c){const _0x56f2e9=_0x85e864;document[_0x56f2e9(0x112)]('[id^=\x22section-\x22]')[_0x56f2e9(0x167)](_0x4af670=>_0x4af670[_0x56f2e9(0x144)]['add'](_0x56f2e9(0x225))),document['getElementById'](_0x56f2e9(0x1ff)+_0x418b63)[_0x56f2e9(0x144)][_0x56f2e9(0x1e6)](_0x56f2e9(0x225)),document[_0x56f2e9(0x112)](_0x56f2e9(0x172))[_0x56f2e9(0x167)](_0x18b753=>_0x18b753[_0x56f2e9(0x144)][_0x56f2e9(0x1e6)](_0x56f2e9(0x1b2)));if(_0x52b60c)_0x52b60c['classList'][_0x56f2e9(0x164)](_0x56f2e9(0x1b2));if(document[_0x56f2e9(0x15f)](_0x56f2e9(0xf9))[_0x56f2e9(0x144)][_0x56f2e9(0x1cc)]('open'))toggleMenu();updateUI();}async function quickAddFlexible(_0x52fc61,_0x1e5326,_0xb3dac0,_0x6dbdc0){const _0x273a96=_0x85e864,_0x243b0d=document[_0x273a96(0x15f)](_0xb3dac0),_0x18763b=document[_0x273a96(0x15f)](_0x1e5326);let _0x438c5b=parseFloat(_0x243b0d[_0x273a96(0x18e)]);const _0x13b697=_0x18763b[_0x273a96(0x18e)]||_0x273a96(0x140)+_0x52fc61;if(isNaN(_0x438c5b)||_0x438c5b<=0x0){alert('يرجى\x20كتابة\x20سعر\x20ومبلغ\x20صحيح\x20أولاً.');return;}if(_0x6dbdc0===_0x273a96(0x111))_0x438c5b=-_0x438c5b;try{const _0x3c3b1a=await insertRecord({'name':_0x13b697,'amount':_0x438c5b,'type':_0x273a96(0x17e),'category':_0x52fc61,'date':Date['now']()});if(!_0x3c3b1a)return;records['unshift'](_0x3c3b1a),_0x243b0d[_0x273a96(0x18e)]='',_0x18763b[_0x273a96(0x18e)]='',updateUI();}catch(_0x33f874){console[_0x273a96(0x153)](_0x33f874),alert(_0x273a96(0x12f));}}async function addTrade(){const _0x59108d=_0x85e864,_0xafc275=parseFloat(document[_0x59108d(0x15f)](_0x59108d(0x14b))[_0x59108d(0x18e)])||0x0,_0x1a7af5=parseFloat(document[_0x59108d(0x15f)](_0x59108d(0x226))[_0x59108d(0x18e)])||0x1,_0x2b5027=document[_0x59108d(0x15f)]('sale-type')['value'],_0x5da683=document[_0x59108d(0x15f)]('party-name')[_0x59108d(0x18e)]||_0x59108d(0xf4);if(_0xafc275<=0x0){alert(_0x59108d(0xeb));return;}try{const _0x4f4d11=await insertRecord({'name':_0x5da683,'amount':_0x1a7af5*_0xafc275,'type':_0x2b5027,'date':Date[_0x59108d(0x150)]()});if(!_0x4f4d11)return;records[_0x59108d(0x114)](_0x4f4d11),document[_0x59108d(0x15f)](_0x59108d(0x14b))[_0x59108d(0x18e)]='',document[_0x59108d(0x15f)](_0x59108d(0x226))['value']='',document[_0x59108d(0x15f)](_0x59108d(0x1b3))[_0x59108d(0x18e)]='',showSection(_0x59108d(0x11f),document[_0x59108d(0x100)](_0x59108d(0x1a7))),updateUI();}catch(_0x56f91e){console['error'](_0x56f91e),alert(_0x59108d(0x174));}}function calcProfit(){const _0x6cacb6=_0x85e864,_0x5e0a75=parseFloat(document[_0x6cacb6(0x15f)](_0x6cacb6(0x20c))[_0x6cacb6(0x18e)])||0x0,_0x1691f8=parseFloat(document[_0x6cacb6(0x15f)]('calc-cost')['value'])||0x0,_0x1a38ee=parseFloat(document[_0x6cacb6(0x15f)](_0x6cacb6(0x11e))[_0x6cacb6(0x18e)])||0x0,_0x37388d=_0x5e0a75-(_0x1691f8+_0x1a38ee),_0xf2b06=_0x5e0a75>0x0?_0x37388d/_0x5e0a75*0x64:0x0;document['getElementById']('calc-net')[_0x6cacb6(0x210)]=formatMoney(_0x37388d),document['getElementById']('calc-margin')[_0x6cacb6(0x210)]=_0xf2b06[_0x6cacb6(0x134)](0x0)+'%';}async function saveProfitEntry(){const _0x3112d3=_0x85e864,_0x18170e=document['getElementById'](_0x3112d3(0xfa))[_0x3112d3(0x18e)]||'تحليل\x20أرباح\x20صفقة',_0x1d052e=parseFloat(document[_0x3112d3(0x15f)]('calc-price')['value'])||0x0,_0xfcaf13=parseFloat(document[_0x3112d3(0x15f)](_0x3112d3(0x1bd))[_0x3112d3(0x18e)])||0x0,_0x30bb47=parseFloat(document['getElementById'](_0x3112d3(0x11e))[_0x3112d3(0x18e)])||0x0;if(_0x1d052e<=0x0){alert(_0x3112d3(0x17c));return;}try{const _0x269cdb=await insertRecord({'name':_0x3112d3(0x232)+_0x18170e,'amount':_0x1d052e,'type':_0x3112d3(0x11d),'date':Date[_0x3112d3(0x150)]()});if(_0x269cdb)records[_0x3112d3(0x114)](_0x269cdb);const _0x37ffc9=_0xfcaf13+_0x30bb47;if(_0x37ffc9>0x0){const _0x194f55=await insertRecord({'name':_0x3112d3(0x180)+_0x18170e,'amount':_0x37ffc9,'type':_0x3112d3(0x222),'date':Date[_0x3112d3(0x150)]()+0x1});if(_0x194f55)records[_0x3112d3(0x114)](_0x194f55);}document['getElementById']('calc-client')['value']='',document[_0x3112d3(0x15f)](_0x3112d3(0x20c))[_0x3112d3(0x18e)]='',document[_0x3112d3(0x15f)](_0x3112d3(0x1bd))[_0x3112d3(0x18e)]='',document[_0x3112d3(0x15f)](_0x3112d3(0x11e))['value']='',calcProfit(),showSection('dashboard',document[_0x3112d3(0x100)]('.nav-icon-link:first-child')),updateUI();}catch(_0xac2208){console[_0x3112d3(0x153)](_0xac2208),alert(_0x3112d3(0x184));}}function updateUI(){const _0x25a00b=_0x85e864;let _0x222611=0x0,_0x1eec0e=0x0,_0x1ab1cc=0x0,_0xde36ff=0x0,_0x1b10b7=0x0;const _0x311398=document[_0x25a00b(0x15f)](_0x25a00b(0x148)),_0x3c3284=document[_0x25a00b(0x15f)](_0x25a00b(0x215)),_0x2cc927=document[_0x25a00b(0x15f)](_0x25a00b(0x17f)),_0x4881dd=document[_0x25a00b(0x15f)](_0x25a00b(0x1e4));if(!_0x311398)return;_0x311398[_0x25a00b(0x126)]='';if(_0x3c3284)_0x3c3284['innerHTML']='';if(_0x2cc927)_0x2cc927['innerHTML']='';if(_0x4881dd)_0x4881dd['innerHTML']='';records[_0x25a00b(0x167)]((_0x30f6aa,_0x3d05da)=>{const _0x38bab5=_0x25a00b,_0x31766b=Number(_0x30f6aa['amount'])||0x0,_0x468755=_0x31766b>=0x0,_0x188e20=formatMoney(_0x31766b,{'sign':_0x38bab5(0x1da)}),_0x3ef439=_0x468755?'text-emerald-600':_0x38bab5(0x131);if(_0x30f6aa[_0x38bab5(0x1af)]===_0x38bab5(0x17e)){const _0x2f85bb=_0x38bab5(0x1aa)+_0x3d05da+_0x38bab5(0x21c)+_0x3ef439+'\x22>'+_0x188e20+_0x38bab5(0x1b6)+escapeHtml(_0x30f6aa[_0x38bab5(0x1a2)])+'</td>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</tr>';if(_0x30f6aa[_0x38bab5(0x127)]==='asset'){_0x1ab1cc+=_0x31766b;if(_0x3c3284)_0x3c3284[_0x38bab5(0x126)]+=_0x2f85bb;}else{if(_0x30f6aa['category']===_0x38bab5(0x124)){_0xde36ff+=_0x31766b;if(_0x2cc927)_0x2cc927[_0x38bab5(0x126)]+=_0x2f85bb;}else{if(_0x30f6aa[_0x38bab5(0x127)]===_0x38bab5(0x123)){_0x1b10b7+=_0x31766b;if(_0x4881dd)_0x4881dd['innerHTML']+=_0x2f85bb;}}}}else{if(_0x30f6aa[_0x38bab5(0x1af)]==='sale')_0x222611+=_0x31766b,_0x1ab1cc+=_0x31766b,_0x1b10b7+=_0x31766b;else _0x30f6aa[_0x38bab5(0x1af)]===_0x38bab5(0x222)&&(_0x1eec0e+=_0x31766b,_0x1ab1cc-=_0x31766b,_0x1b10b7-=_0x31766b);}const _0x3540a5=new Date(_0x30f6aa[_0x38bab5(0x178)]||Date['now']());_0x311398[_0x38bab5(0x126)]+='\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22flex\x20justify-between\x20items-center\x20gap-2\x20p-3.5\x20bg-slate-50/60\x20rounded-2xl\x20text-xs\x20mb-2\x20border-r-4\x20border-[#D4AF37]\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\x20onclick=\x22deleteRecord('+_0x3d05da+_0x38bab5(0x129)+_0x3ef439+'\x22>'+_0x188e20+_0x38bab5(0x1bf)+escapeHtml(_0x30f6aa[_0x38bab5(0x1a2)])+_0x38bab5(0x155)+_0x3540a5[_0x38bab5(0x103)](_0x38bab5(0x1be))+_0x38bab5(0x18a);}),document[_0x25a00b(0x15f)](_0x25a00b(0x15a))['innerText']=formatMoney(_0x222611),document[_0x25a00b(0x15f)](_0x25a00b(0x138))['innerText']=formatMoney(_0x1eec0e),document[_0x25a00b(0x15f)]('asset-total')[_0x25a00b(0x210)]=formatMoney(_0x1ab1cc),document[_0x25a00b(0x15f)](_0x25a00b(0x1c4))[_0x25a00b(0x210)]=formatMoney(_0xde36ff),document[_0x25a00b(0x15f)](_0x25a00b(0x113))[_0x25a00b(0x210)]=formatMoney(_0x1b10b7);const _0x29f3c0=_0x1ab1cc-(_0xde36ff+_0x1b10b7),_0x5a963b=document[_0x25a00b(0x15f)](_0x25a00b(0x125));_0x5a963b&&(Math[_0x25a00b(0x1c7)](_0x29f3c0)<0.1?(_0x5a963b[_0x25a00b(0x210)]=_0x25a00b(0x151),_0x5a963b[_0x25a00b(0x16f)]['color']=_0x25a00b(0x204),_0x5a963b[_0x25a00b(0x16f)][_0x25a00b(0x206)]='#ecfdf5'):(_0x5a963b['innerText']=_0x25a00b(0x128)+formatMoney(_0x29f3c0),_0x5a963b[_0x25a00b(0x16f)][_0x25a00b(0x1ed)]='#ef4444',_0x5a963b['style'][_0x25a00b(0x206)]=_0x25a00b(0x228))),initChart(_0x1ab1cc,_0xde36ff,_0x1b10b7);}function escapeHtml(_0x1fab1e){const _0x27da22=_0x85e864;return String(_0x1fab1e??'')[_0x27da22(0x201)]('&',_0x27da22(0x1fe))[_0x27da22(0x201)]('<','&lt;')['replaceAll']('>',_0x27da22(0xf3))[_0x27da22(0x201)]('\x22','&quot;')[_0x27da22(0x201)]('\x27',_0x27da22(0x195));}window[_0x85e864(0x198)]&&(Chart[_0x85e864(0x12d)][_0x85e864(0x142)][_0x85e864(0x121)]='\x27Cairo\x27,\x20sans-serif');document['fonts']&&document['fonts'][_0x85e864(0xf8)]&&document[_0x85e864(0x1c2)][_0x85e864(0xf8)]['then'](()=>{const _0x4283ec=_0x85e864;if(myChart)myChart[_0x4283ec(0x21a)]();});function initChart(_0x53d96d,_0x2f97b7,_0x45273b){const _0x325d7d=_0x85e864,_0x228877=document[_0x325d7d(0x15f)](_0x325d7d(0x179));if(!_0x228877)return;if(myChart)myChart[_0x325d7d(0x189)]();const _0x3aeba6=_0x53d96d===0x0&&_0x2f97b7===0x0&&_0x45273b===0x0,_0x3b0820=_0x3aeba6?[0x1,0x0,0x0]:[Math['abs'](_0x53d96d),Math[_0x325d7d(0x1c7)](_0x2f97b7),Math[_0x325d7d(0x1c7)](_0x45273b)],_0x3ad37d=[_0x53d96d,_0x2f97b7,_0x45273b],_0x5545d2=[_0x325d7d(0x1d9),_0x325d7d(0x115),'#D4AF37'];myChart=new Chart(_0x228877,{'type':_0x325d7d(0x191),'data':{'labels':[_0x325d7d(0x1d7),'الالتزامات',_0x325d7d(0x143)],'datasets':[{'data':_0x3b0820,'backgroundColor':_0x3aeba6?[_0x325d7d(0x22b),_0x325d7d(0x22b),'#E9DFCB']:_0x5545d2,'borderColor':_0x325d7d(0x108),'borderWidth':0x2}]},'options':{'responsive':!![],'maintainAspectRatio':![],'cutout':'62%','layout':{'padding':{'top':0x4,'bottom':0x4}},'plugins':{'legend':{'display':!![],'position':_0x325d7d(0x12b),'rtl':!![],'textDirection':_0x325d7d(0x1cb),'labels':{'color':'#00002A','font':{'family':_0x325d7d(0x1c0),'size':0xc,'weight':'700'},'usePointStyle':!![],'pointStyle':_0x325d7d(0x1b7),'boxWidth':0xa,'boxHeight':0xa,'padding':0xe,'generateLabels':_0xee3a80=>_0xee3a80[_0x325d7d(0x10a)][_0x325d7d(0x13f)][_0x325d7d(0x110)]((_0x3d3205,_0x43aafe)=>({'text':_0x3d3205,'fillStyle':_0x5545d2[_0x43aafe],'strokeStyle':_0x5545d2[_0x43aafe],'fontColor':_0x325d7d(0x1d9),'lineWidth':0x0,'pointStyle':_0x325d7d(0x1b7),'hidden':!_0xee3a80[_0x325d7d(0x1f3)](_0x43aafe),'index':_0x43aafe}))}},'tooltip':{'rtl':!![],'textDirection':_0x325d7d(0x1cb),'backgroundColor':_0x325d7d(0x1d9),'titleColor':_0x325d7d(0x146),'bodyColor':'#FBF8F1','borderColor':_0x325d7d(0x146),'borderWidth':0x1,'padding':0xa,'displayColors':![],'titleFont':{'family':_0x325d7d(0x1c0),'weight':_0x325d7d(0xf5)},'bodyFont':{'family':_0x325d7d(0x1c0),'size':0xd,'weight':'700'},'callbacks':{'title':_0x286a7e=>_0x286a7e[_0x325d7d(0x1ac)]?_0x286a7e[0x0]['label']:'','label':_0xc7ab8b=>formatMoney(_0x3aeba6?0x0:_0x3ad37d[_0xc7ab8b[_0x325d7d(0x1a9)]],{'plain':!![]})}}}}});}function exportExcel(){const _0x16c219=_0x85e864;if(records[_0x16c219(0x1ac)]===0x0)return alert(_0x16c219(0x12e));const _0x58bb7d=window['open']('',_0x16c219(0x207));if(!_0x58bb7d){alert(_0x16c219(0x175));return;}let _0x2adcea=records['map']((_0x36e393,_0x58ac0b)=>{const _0x5adea9=_0x16c219,_0x59ad4a=new Date(_0x36e393[_0x5adea9(0x178)]||Date[_0x5adea9(0x150)]()),_0x381419=_0x59ad4a[_0x5adea9(0x103)](_0x5adea9(0x1be)),_0x4af824=_0x36e393[_0x5adea9(0x1af)]===_0x5adea9(0x11d)?_0x5adea9(0x19c):_0x36e393[_0x5adea9(0x1af)]===_0x5adea9(0x222)?_0x5adea9(0x217):_0x5adea9(0x193);return _0x5adea9(0x16c)+(_0x58ac0b+0x1)+_0x5adea9(0x170)+_0x381419+'</td>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<td\x20style=\x22width:\x2045%;\x20text-align:\x20right;\x20padding-right:\x2015px;\x22>'+escapeHtml(_0x36e393[_0x5adea9(0x1a2)])+_0x5adea9(0x200)+_0x4af824+_0x5adea9(0x10b)+formatMoney(_0x36e393[_0x5adea9(0x105)])+_0x5adea9(0x192);})['join']('');_0x58bb7d[_0x16c219(0x1dd)][_0x16c219(0x1c9)]('\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<html\x20dir=\x22rtl\x22\x20lang=\x22ar\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<head>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<title>سجل\x20القيود\x20اليومية\x20-\x20The\x20Compass</title>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<link\x20href=\x22https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap\x22\x20rel=\x22stylesheet\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20body\x20{\x20font-family:\x20\x27Cairo\x27,\x20sans-serif;\x20padding:\x2020px;\x20background-color:\x20#fff;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.report-header\x20{\x20text-align:\x20center;\x20margin-bottom:\x2020px;\x20border:\x202px\x20solid\x20#00002A;\x20padding:\x2010px;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20table\x20{\x20width:\x20100%;\x20border-collapse:\x20collapse;\x20margin-top:\x2010px;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20th,\x20td\x20{\x20border:\x201px\x20solid\x20#000;\x20height:\x2035px;\x20text-align:\x20center;\x20font-size:\x2014px;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20th\x20{\x20background-color:\x20#f0f0f0;\x20font-weight:\x20bold;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20tr:nth-child(even)\x20{\x20background-color:\x20#fafafa;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.no-print-btn\x20{\x20margin-top:\x2020px;\x20padding:\x2010px\x2030px;\x20background:\x20#00002A;\x20color:\x20#D4AF37;\x20border:\x20none;\x20border-radius:\x205px;\x20cursor:\x20pointer;\x20font-family:\x20\x27Cairo\x27;\x20font-weight:\x20bold;\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20@media\x20print\x20{\x20.no-print-btn\x20{\x20display:\x20none;\x20}\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</style>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</head>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<body>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22report-header\x22><h2>سجل\x20الحركات\x20المالية\x20والقيود\x20-\x20The\x20Compass</h2><div\x20style=\x22font-size:13px;\x22>العملة:\x20'+CURRENCIES[CUR][_0x16c219(0x1a2)]+'\x20('+currencySymbol()+_0x16c219(0x1de)+currencySymbol()+_0x16c219(0x1e3)+_0x2adcea+_0x16c219(0x190)),_0x58bb7d[_0x16c219(0x1dd)][_0x16c219(0x177)]();}async function initializeCompassAuth(){const _0x23dbf9=_0x85e864;try{setConnectionStatus(_0x23dbf9(0x117),_0x23dbf9(0x17b)),await loadSupabaseLibrary(),compassClient=window[_0x23dbf9(0x162)][_0x23dbf9(0x1f7)](SUPABASE_URL,SUPABASE_KEY,{'auth':{'autoRefreshToken':!![],'persistSession':!![],'detectSessionInUrl':!![],'flowType':'pkce'}}),supabaseReady=!![],setConnectionStatus(_0x23dbf9(0x1d4),_0x23dbf9(0xf8)),compassClient[_0x23dbf9(0x1bc)]['onAuthStateChange']((_0x518a0e,_0xc2488c)=>{const _0x48a30a=_0x23dbf9;if(_0x518a0e===_0x48a30a(0x208)){showResetPasswordView();return;}if(_0x518a0e==='SIGNED_OUT'){resetSessionState(),showLock();return;}_0xc2488c&&(_0x518a0e===_0x48a30a(0x102)||_0x518a0e===_0x48a30a(0x1fc)||_0x518a0e===_0x48a30a(0x1fb)||_0x518a0e==='USER_UPDATED')&&setTimeout(()=>handleSignedIn(_0xc2488c),0x0);}),switchAuthMode(_0x23dbf9(0x11b));const {data:_0x98f803,error:_0x25b402}=await compassClient[_0x23dbf9(0x1bc)][_0x23dbf9(0x229)]();if(_0x25b402)throw _0x25b402;_0x98f803[_0x23dbf9(0x18b)]?await handleSignedIn(_0x98f803[_0x23dbf9(0x18b)]):showLock();}catch(_0x270485){console[_0x23dbf9(0x153)]('Auth\x20bootstrap\x20error:',_0x270485),supabaseReady=![],showLock(),setConnectionStatus(_0x23dbf9(0x221),_0x23dbf9(0x153)),setAuthMessage('auth-message',_0x23dbf9(0x157),_0x23dbf9(0x153));}}initializeCompassAuth();_0x85e864(0xef)in navigator&&/^https?:$/['test'](location[_0x85e864(0x186)])&&window['addEventListener'](_0x85e864(0x141),()=>{const _0x9603ed=_0x85e864;navigator['serviceWorker'][_0x9603ed(0x1ea)](_0x9603ed(0x1d5))[_0x9603ed(0x1a1)](()=>{});});document[_0x85e864(0x159)]('keydown',_0x14b7d1=>{const _0x1a1d83=_0x85e864;if(_0x14b7d1[_0x1a1d83(0x1f1)]!==_0x1a1d83(0x22d))return;const _0x5a6149=document[_0x1a1d83(0xfc)];(_0x5a6149?.['id']===_0x1a1d83(0x1c5)||_0x5a6149?.['id']===_0x1a1d83(0x22c)||_0x5a6149?.['id']===_0x1a1d83(0x21e))&&submitAuth();if(_0x5a6149?.['id']===_0x1a1d83(0x16b))submitActivation();if(_0x5a6149?.['id']===_0x1a1d83(0x171))sendResetEmail();if(_0x5a6149?.['id']===_0x1a1d83(0x183))updatePassword();});</script>
 </body>
 </html>
